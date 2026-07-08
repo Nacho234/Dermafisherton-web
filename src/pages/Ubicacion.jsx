@@ -10,6 +10,7 @@ import Reveal from "../components/Reveal";
 import Button from "../components/Button";
 import { MapPanel } from "./Home";
 import { site, waLink } from "../data/site";
+import sucursal from "../assets/sucursal.webp";
 
 export default function Ubicacion() {
   return (
@@ -99,6 +100,47 @@ export default function Ubicacion() {
           {/* Map */}
           <Reveal className="md:col-span-7" y={24}>
             <MapPanel />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Nuestra sede — foto real del edificio como fondo */}
+      <section className="relative overflow-hidden">
+        <img
+          src={sucursal}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-brown/60" aria-hidden />
+        <div className="container-page relative z-10 py-24 text-center md:py-36">
+          <Reveal>
+            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-warm-white/75">
+              Nuestra sede
+            </span>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <h2 className="mx-auto mt-4 max-w-2xl text-3xl leading-tight text-warm-white sm:text-4xl md:text-5xl">
+              Schweitzer 8883 · Portero 4
+            </h2>
+          </Reveal>
+          <Reveal delay={0.14}>
+            <p className="mt-3 text-lg text-warm-white/80">
+              Schweitzer y A. Condarco, Fisherton — Rosario
+            </p>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <div className="mt-8 flex justify-center">
+              <Button
+                href={site.mapsLink}
+                target="_blank"
+                rel="noreferrer"
+                variant="sage"
+                size="md"
+              >
+                <NavigationArrow size={18} weight="fill" /> Cómo llegar
+              </Button>
+            </div>
           </Reveal>
         </div>
       </section>

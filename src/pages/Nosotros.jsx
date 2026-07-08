@@ -5,6 +5,7 @@ import Button from "../components/Button";
 import SectionHeader from "../components/SectionHeader";
 import EditorialImage from "../components/EditorialImage";
 import CTASection from "../components/CTASection";
+import TeamSection from "../components/TeamSection";
 
 const philosophy = [
   {
@@ -91,7 +92,12 @@ export default function Nosotros() {
         </div>
       </section>
 
-      {/* Profesional / equipo — placeholders editables */}
+      {/* Nuestro equipo — cards con foto circular (datos en src/data/team.js) */}
+      <TeamSection />
+
+      {/* Sección de equipo original (preservada sin renderizar): cambiar
+          `false` por `true` para volver a mostrarla. */}
+      {false && (
       <section className="container-page py-20 md:py-28">
         <SectionHeader title="El equipo profesional" />
         <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -135,6 +141,7 @@ export default function Nosotros() {
           </Reveal>
         </div>
       </section>
+      )}
 
       <CTASection
         title="Conocé qué necesita tu piel"
