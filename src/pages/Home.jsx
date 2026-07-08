@@ -7,6 +7,8 @@ import {
   MapPinLine,
   ArrowRight,
   ArrowUpRight,
+  Drop,
+  Sun,
 } from "@phosphor-icons/react";
 
 import Reveal from "../components/Reveal";
@@ -20,23 +22,78 @@ import CTASection from "../components/CTASection";
 import { featured } from "../data/treatments";
 import { testimonials, differentiators, process } from "../data/content";
 import { site, waLink } from "../data/site";
-import heroPortrait from "../assets/hero-portrait.png";
+
+const heroPortrait = "/hero/hero-portrait.webp";
 
 const icons = { Stethoscope, HandHeart, Sparkle, MapPinLine };
 
+// Destacados del hero (card liquid glass, bajo los botones).
+const heroHighlights = [
+  { icon: Sparkle, text: "Armonización facial" },
+  { icon: Drop, text: "Skinbooster" },
+  { icon: Sun, text: "Peelings y manchas" },
+];
+
+/* --------- Card "liquid glass" con destacados del hero ------------------- */
+function HeroHighlightsCard({ className = "", compact = false }) {
+  const radius = compact ? "rounded-2xl" : "rounded-[1.75rem]";
+  const topRadius = compact ? "rounded-t-2xl" : "rounded-t-[1.75rem]";
+  const rowPad = compact ? "gap-2.5 px-2.5 py-2" : "gap-3 px-3.5 py-3";
+  const iconBox = compact ? "h-7 w-7" : "h-9 w-9";
+  const iconSize = compact ? 14 : 18;
+  const textSize = compact ? "text-xs" : "text-[0.95rem]";
+  return (
+    <div
+      className={`relative w-full max-w-sm overflow-hidden ${radius} border border-white/60 bg-white/25 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_24px_60px_-24px_rgba(75,63,56,0.35)] backdrop-blur-xl ${className}`}
+    >
+      {/* reflejo superior tipo vidrio */}
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute inset-x-0 top-0 h-1/2 ${topRadius} bg-gradient-to-b from-white/45 to-transparent`}
+      />
+      <ul className="relative divide-y divide-white/40">
+        {heroHighlights.map((h) => {
+          const Icon = h.icon;
+          return (
+            <li key={h.text} className={`flex items-center ${rowPad}`}>
+              <span
+                className={`grid ${iconBox} shrink-0 place-items-center rounded-full border border-white/60 bg-white/40 text-sage-deep`}
+              >
+                <Icon size={iconSize} weight="light" />
+              </span>
+              <span className={`${textSize} font-medium text-graphite`}>
+                {h.text}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 /* ------------------------------- Hero ---------------------------------- */
 function Hero() {
-  const reduce = useReducedMotion();
-  const floats = [
-    { label: "Evaluación personalizada", pos: "left-4 top-8 md:-left-8 md:top-14" },
-    { label: "Resultados naturales", pos: "right-4 top-1/2 md:-right-10" },
-    { label: "Atención profesional", pos: "bottom-8 left-8 md:bottom-12 md:left-4" },
-  ];
   return (
-    <section className="relative overflow-hidden bg-warm-white pt-24 md:pt-24">
-      <div className="container-page grid items-center gap-12 pb-16 md:min-h-[calc(100dvh-76px)] md:grid-cols-12 md:gap-10 md:pb-20">
-        {/* Copy */}
-        <div className="md:col-span-6 lg:col-span-6">
+    <section className="relative overflow-hidden bg-warm-white">
+      <div className="container-page relative grid items-center gap-12 pt-28 pb-0 md:min-h-[calc(100dvh-76px)] md:grid-cols-12 md:items-start md:gap-10 md:pt-[6.5rem] md:pb-20">
+        {/* DESKTOP: panel de imagen de altura contenida, ocupando todo el ancho
+            del container y centrado verticalmente. Acomodá con objectPosition. */}
+        <div className="pointer-events-none absolute inset-x-0 top-[5.5rem] bottom-0 hidden overflow-hidden rounded-3xl md:block">
+          <img
+            src={heroPortrait}
+            alt="Cuidado profesional de la piel en Dermafisherton, Fisherton"
+            className="h-full w-full rounded-3xl object-cover"
+            style={{
+              objectPosition: "50% center",
+              transform: "scale(0.9)",
+              transformOrigin: "100% 100%",
+            }}
+          />
+        </div>
+
+        {/* IZQUIERDA: texto */}
+        <div className="relative z-10 md:col-span-6 lg:col-span-6">
           <Reveal>
             <span className="eyebrow">Dermatología · Estética · Fisherton</span>
           </Reveal>
@@ -61,33 +118,34 @@ function Hero() {
               </Button>
             </div>
           </Reveal>
+
+          {/* Card liquid glass con destacados (bajo los botones, solo PC) */}
+          <Reveal delay={0.26} className="hidden md:block">
+            <HeroHighlightsCard className="mt-8" />
+          </Reveal>
         </div>
 
-        {/* Asset with floating cards */}
-        <div className="md:col-span-6 lg:col-span-6">
+        {/* MOBILE: imagen apilada full-bleed (en desktop se usa el fondo) */}
+        <div className="-mx-6 md:hidden">
           <Reveal delay={0.15} y={30} className="relative">
             <EditorialImage
               src={heroPortrait}
-              w={1672}
-              h={941}
-              alt="Piel sana y cuidada — Dermafisherton, Fisherton"
+              w={1400}
+              h={788}
+              alt="Cuidado profesional de la piel en Dermafisherton, Fisherton"
               priority
               scrim={false}
-              objectPosition="62% center"
-              className="aspect-[4/5] w-full md:aspect-[5/6]"
+              objectPosition="50% center"
+              rounded="rounded-none"
+              className="aspect-[4/5] w-full"
             />
-            {floats.map((f, i) => (
-              <motion.div
-                key={f.label}
-                initial={reduce ? false : { opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.5 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-                className={`absolute ${f.pos} rounded-2xl border border-cream bg-warm-white/85 px-4 py-2.5 text-sm font-medium text-brown shadow-soft backdrop-blur-md`}
-              >
-                <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-sage-deep align-middle" />
-                {f.label}
-              </motion.div>
-            ))}
+            {/* Card liquid glass dentro de la imagen, abajo a la izquierda */}
+            <Reveal
+              delay={0.45}
+              className="absolute bottom-4 left-4 z-10 w-[58%] max-w-[12.5rem]"
+            >
+              <HeroHighlightsCard compact />
+            </Reveal>
           </Reveal>
         </div>
       </div>
@@ -95,27 +153,79 @@ function Hero() {
   );
 }
 
+/* ----------------- Carrusel de cualidades (bajo el hero) ---------------- */
+const qualities = [
+  { e: "✨", t: "Resultados naturales" },
+  { e: "🌿", t: "Criterio dermatológico" },
+  { e: "🤍", t: "Atención personalizada" },
+  { e: "🔬", t: "Tecnología estética" },
+  { e: "💧", t: "Cuidado de la piel" },
+  { e: "⚕️", t: "Evaluación profesional" },
+  { e: "📍", t: "En Fisherton" },
+  { e: "🕊️", t: "Acompañamiento cercano" },
+];
+
+function QualitiesMarquee() {
+  const reduce = useReducedMotion();
+  const track = [...qualities, ...qualities];
+  return (
+    <section className="border-y border-graphite/[0.07] bg-warm-white">
+      <div className="relative overflow-hidden py-5 md:py-6">
+        {/* fundidos en los bordes */}
+        <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-warm-white to-transparent md:w-24" />
+        <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-warm-white to-transparent md:w-24" />
+        <motion.ul
+          className="flex w-max items-center gap-10 whitespace-nowrap md:gap-14"
+          animate={reduce ? undefined : { x: ["0%", "-50%"] }}
+          transition={{ duration: 42, ease: "linear", repeat: Infinity }}
+        >
+          {track.map((q, i) => (
+            <li key={i} className="flex items-center gap-2.5">
+              <span className="text-base md:text-lg" aria-hidden>{q.e}</span>
+              <span className="text-[0.95rem] font-medium text-brown md:text-base">{q.t}</span>
+            </li>
+          ))}
+        </motion.ul>
+      </div>
+    </section>
+  );
+}
+
 /* --------------------------- Diferenciales ------------------------------ */
+// 3 círculos con imagen adentro. Poné la imagen real en `img`
+// (ej. "/circulos/dermatologia.webp" dentro de public/circulos/); si queda
+// vacío usa un placeholder.
+const circleHighlights = [
+  { title: "Dermatología clínica", img: "", seed: "circle-dermatologia" },
+  { title: "Estética facial", img: "", seed: "circle-estetica" },
+  { title: "Tecnología estética", img: "", seed: "circle-tecnologia" },
+];
+
 function Differentiators() {
   return (
     <section className="border-y border-cream bg-cream-soft/40">
-      <div className="container-page grid gap-x-8 gap-y-12 py-16 md:grid-cols-2 md:py-24 lg:grid-cols-4">
-        {differentiators.map((d, i) => {
-          const Icon = icons[d.icon];
-          return (
-            <Reveal key={d.title} delay={i * 0.08}>
-              <div className="flex h-full flex-col">
-                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-warm-white text-sage-deep shadow-soft">
-                  <Icon size={24} weight="light" />
-                </span>
-                <h3 className="mt-5 text-xl text-graphite">{d.title}</h3>
-                <p className="mt-2.5 text-[0.95rem] leading-relaxed text-brown/70">
-                  {d.text}
-                </p>
+      <div className="container-page py-20 md:py-28">
+        <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-3 md:gap-10 lg:gap-12">
+          {circleHighlights.map((c, i) => (
+            <Reveal key={c.title} delay={i * 0.1}>
+              <div className="flex flex-col items-center text-center">
+                <EditorialImage
+                  src={c.img || undefined}
+                  seed={c.seed}
+                  w={700}
+                  h={700}
+                  alt={c.title}
+                  scrim={false}
+                  rounded="rounded-full"
+                  className="aspect-square w-72 shadow-lift ring-1 ring-black/[0.04] md:w-full"
+                />
+                <h3 className="mt-6 text-xl text-graphite md:text-2xl">
+                  {c.title}
+                </h3>
               </div>
             </Reveal>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -343,6 +453,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <QualitiesMarquee />
       <Differentiators />
       <Featured />
       <Approach />

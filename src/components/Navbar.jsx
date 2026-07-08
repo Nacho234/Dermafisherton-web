@@ -19,9 +19,10 @@ function Wordmark({ onClick }) {
     <Link
       to="/"
       onClick={onClick}
-      className="font-display text-2xl font-semibold tracking-tight text-graphite"
+      aria-label="Dermafisherton — Inicio"
+      className="inline-flex items-center"
     >
-      Derma<span className="text-sage-deep">fisherton</span>
+      <img src="/brand/logo.webp" alt="Dermafisherton" className="h-9 w-auto md:h-11" />
     </Link>
   );
 }
@@ -38,21 +39,23 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Cierra el menú al pasar a desktop.
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [open]);
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const onChange = () => mq.matches && setOpen(false);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
-      <div
-        className={`transition-all duration-500 ${
+    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 md:pt-4">
+      <nav
+        className={`mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 rounded-[1.4rem] border pl-5 pr-3 transition-all duration-500 md:h-[4.75rem] md:pl-8 md:pr-4 ${
           scrolled
-            ? "border-b border-cream/70 bg-warm-white/80 backdrop-blur-xl"
-            : "border-b border-transparent bg-transparent"
+            ? "border-graphite/10 bg-warm-white/85 shadow-lift backdrop-blur-xl"
+            : "border-graphite/[0.06] bg-warm-white/65 shadow-soft backdrop-blur-md"
         }`}
       >
-        <nav className="container-page flex h-[68px] items-center justify-between md:h-[76px]">
           <Wordmark />
 
           {/* Desktop links — one line, ≤80px tall */}
@@ -63,7 +66,7 @@ export default function Navbar() {
                   to={l.to}
                   end={l.end}
                   className={({ isActive }) =>
-                    `relative text-sm transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-sage-deep after:transition-all after:duration-300 ${
+                    `relative text-[0.95rem] transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-sage-deep after:transition-all after:duration-300 ${
                       isActive
                         ? "text-brown after:w-full"
                         : "text-brown/65 hover:text-brown after:w-0 hover:after:w-full"
@@ -85,76 +88,51 @@ export default function Navbar() {
           {/* Mobile toggle */}
           <button
             type="button"
-            onClick={() => setOpen(true)}
-            aria-label="Abrir menú"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={open}
             className="grid h-11 w-11 place-items-center rounded-full text-graphite lg:hidden"
           >
-            <List size={26} />
+            {open ? <X size={24} /> : <List size={26} />}
           </button>
-        </nav>
-      </div>
+      </nav>
 
-      {/* Mobile full-screen menu */}
+      {/* Menú mobile — panel flotante debajo del navbar (mismo estilo) */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={reduce ? { opacity: 0 } : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 bg-warm-white lg:hidden"
+            key="mobile-menu"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="mx-auto mt-2 max-w-6xl overflow-hidden rounded-[1.25rem] border border-graphite/10 bg-warm-white/95 p-3 shadow-lift backdrop-blur-xl lg:hidden"
           >
-            <div className="container-page flex h-[68px] items-center justify-between">
-              <Wordmark onClick={() => setOpen(false)} />
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Cerrar menú"
-                className="grid h-11 w-11 place-items-center rounded-full text-graphite"
-              >
-                <X size={26} />
-              </button>
-            </div>
-
-            <motion.ul
-              initial="hidden"
-              animate="show"
-              variants={{
-                hidden: {},
-                show: { transition: { staggerChildren: 0.05, delayChildren: 0.1 } },
-              }}
-              className="container-page mt-8 flex flex-col gap-1"
-            >
+            <ul className="flex flex-col">
               {links.map((l) => (
-                <motion.li
-                  key={l.to}
-                  variants={{
-                    hidden: reduce ? { opacity: 0 } : { opacity: 0, y: 16 },
-                    show: { opacity: 1, y: 0 },
-                  }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                >
+                <li key={l.to}>
                   <NavLink
                     to={l.to}
                     end={l.end}
                     onClick={() => setOpen(false)}
                     className={({ isActive }) =>
-                      `block border-b border-cream py-4 font-display text-3xl ${
-                        isActive ? "text-sage-deep" : "text-graphite"
+                      `block rounded-xl px-4 py-3 text-lg transition-colors ${
+                        isActive
+                          ? "bg-sage/15 text-sage-deep"
+                          : "text-graphite hover:bg-black/[0.03]"
                       }`
                     }
                   >
                     {l.label}
                   </NavLink>
-                </motion.li>
+                </li>
               ))}
-            </motion.ul>
-
-            <div className="container-page mt-8">
+            </ul>
+            <div className="mt-2 px-1 pb-1">
               <Button
                 to="/contacto"
                 variant="primary"
-                size="lg"
+                size="md"
                 className="w-full"
                 onClick={() => setOpen(false)}
               >
