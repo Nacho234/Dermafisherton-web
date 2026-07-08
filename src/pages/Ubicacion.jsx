@@ -17,6 +17,7 @@ import Button from "../components/Button";
 import { MapPanel } from "./Home";
 import { site, waLink } from "../data/site";
 import sucursal from "../assets/sucursal.webp";
+import sedeExterior from "../assets/sede-exterior.webp";
 
 export default function Ubicacion() {
   // Parallax: la foto de la sede se mueve más lento que el scroll.
@@ -147,10 +148,10 @@ export default function Ubicacion() {
         </div>
       </section>
 
-      {/* Nuestra sede — foto real del edificio como fondo */}
+      {/* Nuestra sede — vista exterior del edificio como fondo */}
       <section className="relative overflow-hidden">
         <img
-          src={sucursal}
+          src={sedeExterior}
           alt=""
           aria-hidden
           className="absolute inset-0 h-full w-full object-cover object-center"
