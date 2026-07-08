@@ -15,9 +15,9 @@ export default function CTASection({
   return (
     <section className="container-page py-20 md:py-28">
       <Reveal className="relative overflow-hidden rounded-3xl bg-brown px-7 py-16 text-center md:px-12 md:py-24">
-        {/* Video de fondo, difuminado (blur + escala para tapar los bordes) */}
+        {/* Video de fondo, nítido (sin blur) */}
         <video
-          className="pointer-events-none absolute inset-0 h-full w-full scale-105 object-cover blur-[2px]"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
           src={ctaVideo}
           poster={ctaPoster}
           autoPlay
