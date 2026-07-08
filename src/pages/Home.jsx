@@ -10,6 +10,9 @@ import {
   Drop,
   Sun,
   Check,
+  ShieldCheck,
+  SealCheck,
+  Leaf,
 } from "@phosphor-icons/react";
 
 import Reveal from "../components/Reveal";
@@ -368,6 +371,14 @@ function Enfoque() {
 /* ------- Foto del equipo en una sola card (bajo "Nuestro criterio") ------ */
 const MOSAIC_SRC = "/mosaico/equipo.png"; // 1672×941 → 16:9
 
+// Sellos monocromáticos bajo la imagen del equipo.
+const mosaicBadges = [
+  { Icon: ShieldCheck, label: "Seguridad médica" },
+  { Icon: SealCheck, label: "Profesionales certificados" },
+  { Icon: HandHeart, label: "Atención cercana" },
+  { Icon: Leaf, label: "Resultados naturales" },
+];
+
 function MosaicBento() {
   const reduce = useReducedMotion();
   return (
@@ -423,6 +434,22 @@ function MosaicBento() {
           </p>
         </div>
       </motion.div>
+
+      {/* Símbolos / sellos monocromáticos debajo de la imagen */}
+      <div className="mx-auto mt-10 flex max-w-4xl flex-wrap items-start justify-center gap-x-10 gap-y-8 sm:mt-12 sm:gap-x-16">
+        {mosaicBadges.map(({ Icon, label }, i) => (
+          <Reveal
+            key={label}
+            delay={i * 0.08}
+            className="flex w-28 flex-col items-center text-center"
+          >
+            <Icon size={34} weight="thin" className="text-graphite" />
+            <span className="mt-3 text-xs font-medium uppercase tracking-[0.12em] text-brown/70">
+              {label}
+            </span>
+          </Reveal>
+        ))}
+      </div>
     </section>
   );
 }
