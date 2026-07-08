@@ -14,32 +14,35 @@ import sucursal from "../assets/sucursal.webp";
 export default function Ubicacion() {
   return (
     <>
-      {/* Hero con la foto real de la sede, a tamaño natural (sin recortar) */}
-      <section className="relative overflow-hidden bg-warm-white pt-28 md:pt-32">
-        <div className="container-page pb-16 md:pb-24">
-          <div className="max-w-2xl">
-            <Reveal>
-              <span className="eyebrow">Ubicación</span>
-            </Reveal>
-            <Reveal delay={0.05}>
-              <h1 className="mt-5 text-[2.4rem] leading-[1.05] sm:text-5xl md:text-[3.4rem]">
-                Estamos en Fisherton
-              </h1>
-            </Reveal>
-            <Reveal delay={0.12}>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-brown/75">
-                Un espacio cómodo, privado y accesible para cuidar tu piel con
-                atención profesional.
-              </p>
-            </Reveal>
+      {/* Hero a lo ancho completo: foto real de la sede con el texto adelante */}
+      <section className="relative bg-warm-white pt-16 md:pt-20">
+        <div className="relative">
+          <img
+            src={sucursal}
+            alt="Sede de Dermafisherton en Schweitzer 8883, Fisherton"
+            className="block h-auto w-full"
+          />
+          {/* velado para que el texto se lea sobre la imagen */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-r from-brown/90 via-brown/55 to-brown/10"
+          />
+          <div className="absolute inset-0 flex items-center">
+            <div className="container-page">
+              <div className="max-w-xl text-warm-white">
+                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-warm-white/80">
+                  Ubicación
+                </span>
+                <h1 className="mt-4 text-[2.2rem] leading-[1.05] text-warm-white drop-shadow-sm sm:text-5xl md:text-[3.4rem]">
+                  Estamos en Fisherton
+                </h1>
+                <p className="mt-5 max-w-md text-base leading-relaxed text-warm-white/90 sm:text-lg">
+                  Un espacio cómodo, privado y accesible para cuidar tu piel con
+                  atención profesional.
+                </p>
+              </div>
+            </div>
           </div>
-          <Reveal delay={0.16} y={28} className="mt-10 md:mt-12">
-            <img
-              src={sucursal}
-              alt="Sede de Dermafisherton en Schweitzer 8883, Fisherton"
-              className="h-auto w-full rounded-3xl border border-cream"
-            />
-          </Reveal>
         </div>
       </section>
 
