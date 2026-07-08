@@ -11,6 +11,7 @@ import Tecnologia from "./pages/Tecnologia";
 import Experiencia from "./pages/Experiencia";
 import Ubicacion from "./pages/Ubicacion";
 import Contacto from "./pages/Contacto";
+import Profesional from "./pages/Profesional";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/experiencia" element={<Experiencia />} />
           <Route path="/ubicacion" element={<Ubicacion />} />
           <Route path="/contacto" element={<Contacto />} />
+          <Route path="/equipo/:slug" element={<Profesional />} />
         </Routes>
       </main>
       <Footer />
