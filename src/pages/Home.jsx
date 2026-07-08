@@ -27,81 +27,50 @@ const heroPortrait = "/hero/hero-portrait.webp";
 
 const icons = { Stethoscope, HandHeart, Sparkle, MapPinLine };
 
-/* ------- Callouts sobre la cara (PC): puntitos + línea + etiqueta -------- */
-function HeroAnnotations({ items, side = "right" }) {
-  const reduce = useReducedMotion();
-  // side="right": línea sale del borde IZQ del pill · "left": del borde DER.
-  const labelAnchor =
-    side === "right" ? "-translate-y-1/2" : "-translate-x-full -translate-y-1/2";
+// Destacados del hero (card liquid glass, bajo los botones).
+const heroHighlights = [
+  { icon: Sparkle, text: "Armonización facial" },
+  { icon: Drop, text: "Skinbooster" },
+  { icon: Sun, text: "Peelings y manchas" },
+];
+
+/* --------- Card "liquid glass" con destacados del hero ------------------- */
+function HeroHighlightsCard({ className = "", compact = false }) {
+  const radius = compact ? "rounded-2xl" : "rounded-[1.75rem]";
+  const topRadius = compact ? "rounded-t-2xl" : "rounded-t-[1.75rem]";
+  const rowPad = compact ? "gap-2.5 px-2.5 py-2" : "gap-3 px-3.5 py-3";
+  const iconBox = compact ? "h-7 w-7" : "h-9 w-9";
+  const iconSize = compact ? 14 : 18;
+  const textSize = compact ? "text-xs" : "text-[0.95rem]";
   return (
-    <div className="pointer-events-none absolute inset-0">
-      {/* líneas conectoras */}
-      <svg
-        className="absolute inset-0 h-full w-full"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
+    <div
+      className={`relative w-full max-w-sm overflow-hidden ${radius} border border-white/60 bg-white/25 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_24px_60px_-24px_rgba(75,63,56,0.35)] backdrop-blur-xl ${className}`}
+    >
+      {/* reflejo superior tipo vidrio */}
+      <div
         aria-hidden
-      >
-        {items.map((it, i) => (
-          <line
-            key={i}
-            x1={it.label[0]}
-            y1={it.label[1]}
-            x2={it.dot[0]}
-            y2={it.dot[1]}
-            stroke="rgba(75,63,56,0.4)"
-            strokeWidth="1"
-            vectorEffect="non-scaling-stroke"
-          />
-        ))}
-      </svg>
-
-      {/* puntitos sobre la cara */}
-      {items.map((it, i) => (
-        <motion.span
-          key={`dot-${i}`}
-          initial={reduce ? false : { scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.7 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-warm-white bg-sage-deep shadow-soft"
-          style={{ left: `${it.dot[0]}%`, top: `${it.dot[1]}%` }}
-        />
-      ))}
-
-      {/* etiquetas */}
-      {items.map((it, i) => {
-        const Icon = it.icon;
-        return (
-          <motion.div
-            key={`label-${i}`}
-            initial={reduce ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className={`absolute flex ${labelAnchor} items-center gap-2 whitespace-nowrap rounded-full border border-cream bg-warm-white/90 px-3.5 py-2 text-sm font-medium text-brown shadow-soft backdrop-blur-md`}
-            style={{ left: `${it.label[0]}%`, top: `${it.label[1]}%` }}
-          >
-            <Icon size={16} weight="light" className="text-sage-deep" />
-            {it.text}
-          </motion.div>
-        );
-      })}
+        className={`pointer-events-none absolute inset-x-0 top-0 h-1/2 ${topRadius} bg-gradient-to-b from-white/45 to-transparent`}
+      />
+      <ul className="relative divide-y divide-white/40">
+        {heroHighlights.map((h) => {
+          const Icon = h.icon;
+          return (
+            <li key={h.text} className={`flex items-center ${rowPad}`}>
+              <span
+                className={`grid ${iconBox} shrink-0 place-items-center rounded-full border border-white/60 bg-white/40 text-sage-deep`}
+              >
+                <Icon size={iconSize} weight="light" />
+              </span>
+              <span className={`${textSize} font-medium text-graphite`}>
+                {h.text}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
-
-// Callouts de PC (etiquetas a la derecha).
-const annotationsDesktop = [
-  { icon: Sparkle, text: "Armonización facial", label: [79, 15], dot: [67, 25] },
-  { icon: Drop, text: "Skinbooster", label: [83, 44], dot: [71, 45] },
-  { icon: Sun, text: "Peelings y manchas", label: [79, 73], dot: [73, 62] },
-];
-
-// Callouts de mobile (etiquetas a la izquierda; borde DERECHO = punto de salida).
-const annotationsMobile = [
-  { icon: Sparkle, text: "Armonización facial", label: [46, 16], dot: [60, 25] },
-  { icon: Drop, text: "Skinbooster", label: [44, 47], dot: [56, 46] },
-  { icon: Sun, text: "Peelings y manchas", label: [46, 77], dot: [60, 64] },
-];
 
 /* ------------------------------- Hero ---------------------------------- */
 function Hero() {
@@ -149,6 +118,11 @@ function Hero() {
               </Button>
             </div>
           </Reveal>
+
+          {/* Card liquid glass con destacados (bajo los botones, solo PC) */}
+          <Reveal delay={0.26} className="hidden md:block">
+            <HeroHighlightsCard className="mt-8" />
+          </Reveal>
         </div>
 
         {/* MOBILE: imagen apilada full-bleed (en desktop se usa el fondo) */}
@@ -165,13 +139,14 @@ function Hero() {
               rounded="rounded-none"
               className="aspect-[4/5] w-full"
             />
-            <HeroAnnotations items={annotationsMobile} side="left" />
+            {/* Card liquid glass dentro de la imagen, abajo a la izquierda */}
+            <Reveal
+              delay={0.45}
+              className="absolute bottom-4 left-4 z-10 w-[58%] max-w-[12.5rem]"
+            >
+              <HeroHighlightsCard compact />
+            </Reveal>
           </Reveal>
-        </div>
-
-        {/* Callouts sobre la cara (PC, etiquetas a la derecha) */}
-        <div className="absolute inset-x-0 top-[5.5rem] bottom-0 z-20 hidden md:block">
-          <HeroAnnotations items={annotationsDesktop} side="right" />
         </div>
       </div>
     </section>
