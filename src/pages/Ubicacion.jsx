@@ -1,3 +1,10 @@
+import { useRef } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+} from "motion/react";
 import {
   MapPinLine,
   Clock,
@@ -10,36 +17,53 @@ import Button from "../components/Button";
 import { MapPanel } from "./Home";
 import { site, waLink } from "../data/site";
 import sucursal from "../assets/sucursal.webp";
+import sedeExterior from "../assets/sede-exterior.webp";
 
 export default function Ubicacion() {
+  // Parallax: la foto de la sede se mueve más lento que el scroll.
+  const heroRef = useRef(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+
   return (
     <>
-      {/* Hero con la foto real de la sede, a tamaño natural (sin recortar) */}
-      <section className="relative overflow-hidden bg-warm-white pt-28 md:pt-32">
-        <div className="container-page pb-16 md:pb-24">
-          <div className="max-w-2xl">
-            <Reveal>
-              <span className="eyebrow">Ubicación</span>
-            </Reveal>
-            <Reveal delay={0.05}>
-              <h1 className="mt-5 text-[2.4rem] leading-[1.05] sm:text-5xl md:text-[3.4rem]">
-                Estamos en Fisherton
-              </h1>
-            </Reveal>
-            <Reveal delay={0.12}>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-brown/75">
-                Un espacio cómodo, privado y accesible para cuidar tu piel con
-                atención profesional.
-              </p>
-            </Reveal>
+      {/* Hero a lo ancho completo con parallax: foto de la sede + texto adelante */}
+      <section className="relative bg-warm-white pt-16 md:pt-20">
+        <div
+          ref={heroRef}
+          className="relative h-[58vh] min-h-[380px] w-full overflow-hidden md:h-[78vh]"
+        >
+          <motion.img
+            src={sucursal}
+            alt="Sede de Dermafisherton en Schweitzer 8883, Fisherton"
+            style={reduce ? undefined : { y }}
+            className="absolute inset-x-0 top-[-8%] h-[116%] w-full object-cover object-center"
+          />
+          {/* velado para que el texto se lea sobre la imagen */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-r from-brown/90 via-brown/55 to-brown/10"
+          />
+          <div className="absolute inset-0 flex items-center">
+            <div className="container-page">
+              <div className="max-w-xl text-warm-white">
+                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-warm-white/80">
+                  Ubicación
+                </span>
+                <h1 className="mt-4 text-[2.2rem] leading-[1.05] text-warm-white drop-shadow-sm sm:text-5xl md:text-[3.4rem]">
+                  Estamos en Fisherton
+                </h1>
+                <p className="mt-5 max-w-md text-base leading-relaxed text-warm-white/90 sm:text-lg">
+                  Un espacio cómodo, privado y accesible para cuidar tu piel con
+                  atención profesional.
+                </p>
+              </div>
+            </div>
           </div>
-          <Reveal delay={0.16} y={28} className="mt-10 md:mt-12">
-            <img
-              src={sucursal}
-              alt="Sede de Dermafisherton en Schweitzer 8883, Fisherton"
-              className="h-auto w-full rounded-3xl border border-cream"
-            />
-          </Reveal>
         </div>
       </section>
 
@@ -124,10 +148,10 @@ export default function Ubicacion() {
         </div>
       </section>
 
-      {/* Nuestra sede — foto real del edificio como fondo */}
+      {/* Nuestra sede — vista exterior del edificio como fondo */}
       <section className="relative overflow-hidden">
         <img
-          src={sucursal}
+          src={sedeExterior}
           alt=""
           aria-hidden
           className="absolute inset-0 h-full w-full object-cover object-center"
