@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   Drop,
   Sun,
+  Check,
 } from "@phosphor-icons/react";
 
 import Reveal from "../components/Reveal";
@@ -300,6 +301,70 @@ function Differentiators() {
   );
 }
 
+/* --------------------- Enfoque editorial (bajo las cards) --------------- */
+function Enfoque() {
+  const puntos = [
+    "Evaluación previa y diagnóstico",
+    "Plan indicado según tu piel y tus objetivos",
+    "Acompañamiento y seguimiento posterior",
+  ];
+  return (
+    <section className="container-page py-20 md:py-28">
+      <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
+        {/* Texto */}
+        <div>
+          <Reveal>
+            <span className="eyebrow">Nuestro criterio</span>
+          </Reveal>
+          <Reveal delay={0.06}>
+            <h2 className="mt-5 text-3xl leading-[1.1] sm:text-4xl md:text-[2.75rem]">
+              Tratamientos indicados, no de catálogo
+            </h2>
+          </Reveal>
+          <Reveal delay={0.12}>
+            <p className="mt-6 max-w-lg text-lg leading-relaxed text-brown/75">
+              No aplicamos protocolos genéricos. Cada plan se define después de
+              evaluar tu piel, tus antecedentes y lo que querés mejorar, buscando
+              seguridad y resultados coherentes con vos.
+            </p>
+          </Reveal>
+          <Reveal delay={0.18}>
+            <ul className="mt-8 space-y-3.5">
+              {puntos.map((t) => (
+                <li key={t} className="flex items-center gap-3 text-brown/85">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-sage/20 text-sage-deep">
+                    <Check size={14} weight="bold" />
+                  </span>
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+          <Reveal delay={0.24}>
+            <div className="mt-9">
+              <Button to="/nosotros" variant="outline" size="md">
+                Conocé nuestro enfoque
+              </Button>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* Imagen (placeholder editable) */}
+        <Reveal y={26}>
+          <EditorialImage
+            src="/enfoque/enfoque.webp"
+            w={1000}
+            h={1250}
+            alt="Piel sana y natural — Dermafisherton"
+            scrim={false}
+            className="aspect-[4/5] w-full"
+          />
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 /* ------------------------ Tratamientos destacados ----------------------- */
 function Featured() {
   return (
@@ -524,6 +589,7 @@ export default function Home() {
       <Hero />
       <QualitiesMarquee />
       <Differentiators />
+      <Enfoque />
       <Featured />
       <Approach />
       <Process />
