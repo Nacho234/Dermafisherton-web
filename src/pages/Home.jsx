@@ -365,6 +365,68 @@ function Enfoque() {
   );
 }
 
+/* ------- Foto del equipo en una sola card (bajo "Nuestro criterio") ------ */
+const MOSAIC_SRC = "/mosaico/equipo.png"; // 1672×941 → 16:9
+
+function MosaicBento() {
+  const reduce = useReducedMotion();
+  return (
+    <section className="container-page py-20 md:py-28">
+      <Reveal className="mx-auto mb-12 flex max-w-2xl flex-col items-center text-center md:mb-16">
+        <span className="mb-4 flex items-center gap-3">
+          <span className="h-px w-8 bg-sage-deep/50" />
+          <span className="eyebrow">Nuestro espacio</span>
+          <span className="h-px w-8 bg-sage-deep/50" />
+        </span>
+        <h2 className="text-3xl leading-[1.08] sm:text-4xl md:text-[2.75rem]">
+          Un espacio pensado en cada{" "}
+          <span className="text-sage-deep">detalle</span>
+        </h2>
+        <p className="mt-5 max-w-xl text-[1.05rem] leading-relaxed text-brown/75">
+          Cuidamos el entorno con la misma atención con la que definimos cada
+          tratamiento.
+        </p>
+      </Reveal>
+      <motion.div
+        className="group relative mx-auto w-full max-w-5xl overflow-hidden rounded-2xl bg-cream ring-1 ring-cream/70 shadow-[0_24px_60px_-30px_rgba(75,63,56,0.55)] sm:rounded-3xl"
+        initial={reduce ? false : { opacity: 0, y: 26 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <img
+          src={MOSAIC_SRC}
+          alt="Equipo profesional de Dermafisherton"
+          width={1672}
+          height={941}
+          loading="lazy"
+          className="block h-auto w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+        />
+
+        {/* Capa gris sobre toda la imagen + refuerzo arriba/abajo */}
+        <span className="pointer-events-none absolute inset-0 bg-graphite/50" />
+        <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-graphite/40 via-transparent to-graphite/50" />
+
+        {/* Texto arriba (centrado) */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 p-6 text-center sm:p-8 md:p-10">
+          <span className="eyebrow !text-white/80">Nuestro equipo</span>
+        </div>
+
+        {/* Texto abajo (centrado) */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 text-center sm:p-8 md:p-10">
+          <h3 className="mx-auto max-w-2xl text-2xl leading-tight text-white sm:text-3xl md:text-4xl">
+            Profesionales dedicados a cuidar tu piel
+          </h3>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/85 sm:text-base">
+            Un equipo médico y estético que trabaja en conjunto, con criterio y
+            cercanía en cada consulta.
+          </p>
+        </div>
+      </motion.div>
+    </section>
+  );
+}
+
 /* ------------------------ Tratamientos destacados ----------------------- */
 function Featured() {
   return (
@@ -590,6 +652,7 @@ export default function Home() {
       <QualitiesMarquee />
       <Differentiators />
       <Enfoque />
+      <MosaicBento />
       <Featured />
       <Approach />
       <Process />
