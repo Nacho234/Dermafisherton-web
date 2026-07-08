@@ -196,16 +196,16 @@ function QualitiesMarquee() {
 // (ej. "/circulos/dermatologia.webp" dentro de public/circulos/); si queda
 // vacío usa un placeholder.
 const circleHighlights = [
-  { title: "Dermatología clínica", img: "", seed: "circle-dermatologia" },
-  { title: "Estética facial", img: "", seed: "circle-estetica" },
-  { title: "Tecnología estética", img: "", seed: "circle-tecnologia" },
+  { title: "Dermatología clínica", img: "/circulos/3.webp", seed: "circle-dermatologia" },
+  { title: "Estética facial", img: "/circulos/1.webp", seed: "circle-estetica" },
+  { title: "Tecnología estética", img: "/circulos/2.webp", seed: "circle-tecnologia" },
 ];
 
 function Differentiators() {
   return (
     <section className="border-y border-cream bg-cream-soft/40">
       <div className="container-page py-20 md:py-28">
-        <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-3 md:gap-10 lg:gap-12">
+        <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-3 md:gap-8 lg:gap-12">
           {circleHighlights.map((c, i) => (
             <Reveal key={c.title} delay={i * 0.1}>
               <div className="flex flex-col items-center text-center">
@@ -217,7 +217,7 @@ function Differentiators() {
                   alt={c.title}
                   scrim={false}
                   rounded="rounded-full"
-                  className="aspect-square w-72 shadow-lift ring-1 ring-black/[0.04] md:w-full"
+                  className="aspect-square w-80 max-w-full shadow-lift ring-1 ring-black/[0.04] md:w-full"
                 />
                 <h3 className="mt-6 text-xl text-graphite md:text-2xl">
                   {c.title}
