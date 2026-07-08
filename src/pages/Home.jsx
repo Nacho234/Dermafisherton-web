@@ -20,7 +20,7 @@ import CTASection from "../components/CTASection";
 import { featured } from "../data/treatments";
 import { testimonials, differentiators, process } from "../data/content";
 import { site, waLink } from "../data/site";
-import heroPortrait from "../assets/hero-portrait.png";
+import heroPortrait from "../assets/hero-portrait.webp";
 
 const icons = { Stethoscope, HandHeart, Sparkle, MapPinLine };
 
@@ -68,8 +68,8 @@ function Hero() {
           <Reveal delay={0.15} y={30} className="relative">
             <EditorialImage
               src={heroPortrait}
-              w={1672}
-              h={941}
+              w={1400}
+              h={788}
               alt="Piel sana y cuidada — Dermafisherton, Fisherton"
               priority
               scrim={false}
