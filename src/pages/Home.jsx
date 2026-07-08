@@ -7,6 +7,8 @@ import {
   MapPinLine,
   ArrowRight,
   ArrowUpRight,
+  Drop,
+  Sun,
 } from "@phosphor-icons/react";
 
 import Reveal from "../components/Reveal";
@@ -20,23 +22,108 @@ import CTASection from "../components/CTASection";
 import { featured } from "../data/treatments";
 import { testimonials, differentiators, process } from "../data/content";
 import { site, waLink } from "../data/site";
-import heroPortrait from "../assets/hero-portrait.png";
+import heroPortrait from "../assets/hero-portrait.webp";
 
 const icons = { Stethoscope, HandHeart, Sparkle, MapPinLine };
 
+/* ------- Callouts sobre la cara (PC): puntitos + línea + etiqueta -------- */
+function HeroAnnotations({ items, side = "right" }) {
+  const reduce = useReducedMotion();
+  // side="right": línea sale del borde IZQ del pill · "left": del borde DER.
+  const labelAnchor =
+    side === "right" ? "-translate-y-1/2" : "-translate-x-full -translate-y-1/2";
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {/* líneas conectoras */}
+      <svg
+        className="absolute inset-0 h-full w-full"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden
+      >
+        {items.map((it, i) => (
+          <line
+            key={i}
+            x1={it.label[0]}
+            y1={it.label[1]}
+            x2={it.dot[0]}
+            y2={it.dot[1]}
+            stroke="rgba(75,63,56,0.4)"
+            strokeWidth="1"
+            vectorEffect="non-scaling-stroke"
+          />
+        ))}
+      </svg>
+
+      {/* puntitos sobre la cara */}
+      {items.map((it, i) => (
+        <motion.span
+          key={`dot-${i}`}
+          initial={reduce ? false : { scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.7 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-warm-white bg-sage-deep shadow-soft"
+          style={{ left: `${it.dot[0]}%`, top: `${it.dot[1]}%` }}
+        />
+      ))}
+
+      {/* etiquetas */}
+      {items.map((it, i) => {
+        const Icon = it.icon;
+        return (
+          <motion.div
+            key={`label-${i}`}
+            initial={reduce ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className={`absolute flex ${labelAnchor} items-center gap-2 whitespace-nowrap rounded-full border border-cream bg-warm-white/90 px-3.5 py-2 text-sm font-medium text-brown shadow-soft backdrop-blur-md`}
+            style={{ left: `${it.label[0]}%`, top: `${it.label[1]}%` }}
+          >
+            <Icon size={16} weight="light" className="text-sage-deep" />
+            {it.text}
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Callouts de PC (etiquetas a la derecha).
+const annotationsDesktop = [
+  { icon: Sparkle, text: "Armonización facial", label: [79, 15], dot: [67, 25] },
+  { icon: Drop, text: "Skinbooster", label: [83, 44], dot: [71, 45] },
+  { icon: Sun, text: "Peelings y manchas", label: [79, 73], dot: [73, 62] },
+];
+
+// Callouts de mobile (etiquetas a la izquierda; borde DERECHO = punto de salida).
+const annotationsMobile = [
+  { icon: Sparkle, text: "Armonización facial", label: [46, 16], dot: [60, 25] },
+  { icon: Drop, text: "Skinbooster", label: [44, 47], dot: [56, 46] },
+  { icon: Sun, text: "Peelings y manchas", label: [46, 77], dot: [60, 64] },
+];
+
 /* ------------------------------- Hero ---------------------------------- */
 function Hero() {
-  const reduce = useReducedMotion();
-  const floats = [
-    { label: "Evaluación personalizada", pos: "left-4 top-8 md:-left-8 md:top-14" },
-    { label: "Resultados naturales", pos: "right-4 top-1/2 md:-right-10" },
-    { label: "Atención profesional", pos: "bottom-8 left-8 md:bottom-12 md:left-4" },
-  ];
   return (
-    <section className="relative overflow-hidden bg-warm-white pt-24 md:pt-24">
-      <div className="container-page grid items-center gap-12 pb-16 md:min-h-[calc(100dvh-76px)] md:grid-cols-12 md:gap-10 md:pb-20">
-        {/* Copy */}
-        <div className="md:col-span-6 lg:col-span-6">
+    <section className="relative overflow-hidden bg-warm-white">
+      <div className="container-page relative grid items-center gap-12 pt-28 pb-0 md:min-h-[calc(100dvh-76px)] md:grid-cols-12 md:gap-10 md:pt-0 md:pb-20">
+        {/* DESKTOP: panel de imagen de altura contenida, ocupando todo el ancho
+            del container y centrado verticalmente. Acomodá con objectPosition. */}
+        <div className="pointer-events-none absolute inset-x-0 top-[7rem] bottom-0 hidden overflow-hidden rounded-3xl md:block">
+          <img
+            src={heroPortrait}
+            alt="Cuidado profesional de la piel en Dermafisherton, Fisherton"
+            className="h-full w-full rounded-3xl object-cover"
+            style={{
+              objectPosition: "50% center",
+              transform: "scale(0.9)",
+              transformOrigin: "100% 100%",
+            }}
+          />
+        </div>
+
+        {/* IZQUIERDA: texto */}
+        <div className="relative z-10 md:col-span-6 lg:col-span-6">
           <Reveal>
             <span className="eyebrow">Dermatología · Estética · Fisherton</span>
           </Reveal>
@@ -63,32 +150,27 @@ function Hero() {
           </Reveal>
         </div>
 
-        {/* Asset with floating cards */}
-        <div className="md:col-span-6 lg:col-span-6">
+        {/* MOBILE: imagen apilada full-bleed (en desktop se usa el fondo) */}
+        <div className="-mx-6 md:hidden">
           <Reveal delay={0.15} y={30} className="relative">
             <EditorialImage
               src={heroPortrait}
-              w={1672}
-              h={941}
-              alt="Piel sana y cuidada — Dermafisherton, Fisherton"
+              w={1400}
+              h={788}
+              alt="Cuidado profesional de la piel en Dermafisherton, Fisherton"
               priority
               scrim={false}
-              objectPosition="62% center"
-              className="aspect-[4/5] w-full md:aspect-[5/6]"
+              objectPosition="50% center"
+              rounded="rounded-none"
+              className="aspect-[4/5] w-full"
             />
-            {floats.map((f, i) => (
-              <motion.div
-                key={f.label}
-                initial={reduce ? false : { opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.5 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-                className={`absolute ${f.pos} rounded-2xl border border-cream bg-warm-white/85 px-4 py-2.5 text-sm font-medium text-brown shadow-soft backdrop-blur-md`}
-              >
-                <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-sage-deep align-middle" />
-                {f.label}
-              </motion.div>
-            ))}
+            <HeroAnnotations items={annotationsMobile} side="left" />
           </Reveal>
+        </div>
+
+        {/* Callouts sobre la cara (PC, etiquetas a la derecha) */}
+        <div className="absolute inset-x-0 top-[7rem] bottom-0 z-20 hidden md:block">
+          <HeroAnnotations items={annotationsDesktop} side="right" />
         </div>
       </div>
     </section>
