@@ -6,19 +6,18 @@
 export const site = {
   name: "Dermafisherton",
   city: "Fisherton",
-  // Cambiá el número (formato internacional sin +, ni espacios) por el real.
-  whatsappNumber: "5493410000000", // [WhatsApp]
+  whatsappNumber: "5493412590703",
   instagram: "https://instagram.com/dermafisherton", // [Instagram]
   instagramHandle: "@dermafisherton",
-  address: "[Dirección exacta], Fisherton, Rosario", // [Dirección]
+  address: "Schweitzer 8883 · Portero 4, Fisherton, Rosario",
   hours: [
     { day: "Lunes a viernes", value: "[09:00 – 19:00]" },
     { day: "Sábados", value: "[09:00 – 13:00]" },
     { day: "Domingos", value: "Cerrado" },
   ],
-  // Reemplazá por el embed real de Google Maps (o dejá para integrar).
-  mapsEmbed: "",
-  mapsLink: "https://maps.google.com/?q=Fisherton+Rosario",
+  mapsEmbed:
+    "https://www.google.com/maps?q=Schweitzer+8883,+Rosario,+Santa+Fe,+Argentina&output=embed",
+  mapsLink: "https://maps.google.com/?q=Schweitzer+8883,+Rosario,+Santa+Fe",
 };
 
 // Mensaje base para WhatsApp
