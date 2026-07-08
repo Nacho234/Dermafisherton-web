@@ -17,7 +17,7 @@ export default function CTASection({
       <Reveal className="relative overflow-hidden rounded-3xl bg-brown px-7 py-16 text-center md:px-12 md:py-24">
         {/* Video de fondo, difuminado (blur + escala para tapar los bordes) */}
         <video
-          className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover blur-md"
+          className="pointer-events-none absolute inset-0 h-full w-full scale-105 object-cover blur-[2px]"
           src={ctaVideo}
           poster={ctaPoster}
           autoPlay
@@ -27,7 +27,7 @@ export default function CTASection({
           aria-hidden="true"
         />
         {/* Velado cálido para que el texto y el botón se lean */}
-        <div aria-hidden className="absolute inset-0 bg-brown/75" />
+        <div aria-hidden className="absolute inset-0 bg-brown/45" />
         {/* soft sage glow, tinted not neon */}
         <div
           aria-hidden
