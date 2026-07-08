@@ -22,7 +22,7 @@ function Wordmark({ onClick }) {
       aria-label="Dermafisherton — Inicio"
       className="inline-flex items-center"
     >
-      <img src="/brand/logo.webp" alt="Dermafisherton" className="h-8 w-auto md:h-9" />
+      <img src="/brand/logo.webp" alt="Dermafisherton" className="h-9 w-auto md:h-11" />
     </Link>
   );
 }
@@ -50,7 +50,7 @@ export default function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 md:pt-4">
       <nav
-        className={`mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 rounded-[1.25rem] border pl-5 pr-3 transition-all duration-500 md:h-16 md:pl-7 md:pr-4 ${
+        className={`mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 rounded-[1.4rem] border pl-5 pr-3 transition-all duration-500 md:h-[4.75rem] md:pl-8 md:pr-4 ${
           scrolled
             ? "border-graphite/10 bg-warm-white/85 shadow-lift backdrop-blur-xl"
             : "border-graphite/[0.06] bg-warm-white/65 shadow-soft backdrop-blur-md"
@@ -66,7 +66,7 @@ export default function Navbar() {
                   to={l.to}
                   end={l.end}
                   className={({ isActive }) =>
-                    `relative text-sm transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-sage-deep after:transition-all after:duration-300 ${
+                    `relative text-[0.95rem] transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-sage-deep after:transition-all after:duration-300 ${
                       isActive
                         ? "text-brown after:w-full"
                         : "text-brown/65 hover:text-brown after:w-0 hover:after:w-full"
