@@ -204,8 +204,8 @@ const circleHighlights = [
 function Differentiators() {
   return (
     <section className="border-y border-cream bg-cream-soft/40">
-      <div className="container-page py-20 md:py-28">
-        <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-3 md:gap-8 lg:gap-12">
+      <div className="mx-auto max-w-[1360px] px-6 py-20 md:px-10 md:py-28">
+        <div className="mx-auto grid gap-12 md:grid-cols-3 md:gap-8 lg:gap-10">
           {circleHighlights.map((c, i) => (
             <Reveal key={c.title} delay={i * 0.1}>
               <div className="flex flex-col items-center text-center">
@@ -217,7 +217,7 @@ function Differentiators() {
                   alt={c.title}
                   scrim={false}
                   rounded="rounded-3xl"
-                  className="aspect-square w-80 max-w-full shadow-lift ring-1 ring-black/[0.04] md:w-full"
+                  className="aspect-square w-[22rem] max-w-full shadow-lift ring-1 ring-black/[0.04] md:w-full"
                 />
                 <h3 className="mt-6 text-xl text-graphite md:text-2xl">
                   {c.title}
