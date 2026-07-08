@@ -1,3 +1,10 @@
+import { useRef } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+} from "motion/react";
 import {
   MapPinLine,
   Clock,
@@ -12,15 +19,28 @@ import { site, waLink } from "../data/site";
 import sucursal from "../assets/sucursal.webp";
 
 export default function Ubicacion() {
+  // Parallax: la foto de la sede se mueve más lento que el scroll.
+  const heroRef = useRef(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+
   return (
     <>
-      {/* Hero a lo ancho completo: foto real de la sede con el texto adelante */}
+      {/* Hero a lo ancho completo con parallax: foto de la sede + texto adelante */}
       <section className="relative bg-warm-white pt-16 md:pt-20">
-        <div className="relative">
-          <img
+        <div
+          ref={heroRef}
+          className="relative h-[58vh] min-h-[380px] w-full overflow-hidden md:h-[78vh]"
+        >
+          <motion.img
             src={sucursal}
             alt="Sede de Dermafisherton en Schweitzer 8883, Fisherton"
-            className="block h-auto w-full"
+            style={reduce ? undefined : { y }}
+            className="absolute inset-x-0 top-[-8%] h-[116%] w-full object-cover object-center"
           />
           {/* velado para que el texto se lea sobre la imagen */}
           <div
