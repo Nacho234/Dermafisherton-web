@@ -1,34 +1,45 @@
-import { User } from "@phosphor-icons/react";
+import { Link } from "react-router-dom";
+import { ArrowRight, User } from "@phosphor-icons/react";
 import Reveal from "./Reveal";
 import { team } from "../data/team";
 
-// Sección "Nuestro equipo": cards con foto circular, nombre, especialidad y
-// bio breve. Los datos se editan en src/data/team.js.
-function TeamCard({ name, role, bio, photo }) {
+// Sección "Nuestro equipo": cards en fila (una al lado de la otra), con foto,
+// nombre y especialidad. Cada card lleva al perfil /equipo/<slug>.
+function TeamCard({ slug, name, role, photo }) {
   return (
-    <article className="group flex h-full flex-col items-center rounded-3xl border border-cream bg-warm-white p-8 text-center shadow-soft transition-all duration-500 ease-out hover:-translate-y-2 hover:border-sage/40 hover:shadow-lift">
-      {photo ? (
-        <span className="overflow-hidden rounded-full border-4 border-cream transition-colors duration-500 group-hover:border-sage/50">
+    <Link
+      to={`/equipo/${slug}`}
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-cream bg-warm-white shadow-soft transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-sage/40 hover:shadow-lift"
+    >
+      <div className="aspect-[4/5] w-full overflow-hidden bg-cream">
+        {photo ? (
           <img
             src={photo}
             alt={name}
-            width={144}
-            height={144}
             loading="lazy"
-            className="h-36 w-36 rounded-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.07]"
+            className="h-full w-full object-cover object-center transition-transform duration-[900ms] ease-out group-hover:scale-[1.05]"
+          />
+        ) : (
+          <span className="grid h-full w-full place-items-center bg-sage/15 text-sage-deep">
+            <User size={56} weight="light" />
+          </span>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="text-lg leading-snug text-graphite">{name}</h3>
+        <p className="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-sage-deep">
+          {role}
+        </p>
+        <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brown">
+          Ver perfil
+          <ArrowRight
+            size={15}
+            weight="bold"
+            className="transition-transform duration-300 group-hover:translate-x-1"
           />
         </span>
-      ) : (
-        <span className="grid h-36 w-36 place-items-center rounded-full border-4 border-cream bg-sage/15 text-sage-deep transition-colors duration-500 group-hover:border-sage/50">
-          <User size={56} weight="light" />
-        </span>
-      )}
-      <h3 className="mt-6 text-2xl text-graphite">{name}</h3>
-      <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-sage-deep">
-        {role}
-      </p>
-      <p className="mt-4 text-[0.95rem] leading-relaxed text-brown/70">{bio}</p>
-    </article>
+      </div>
+    </Link>
   );
 }
 
@@ -53,9 +64,9 @@ export default function TeamSection() {
           </Reveal>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
           {team.map((member, i) => (
-            <Reveal key={`${member.name}-${i}`} delay={(i % 3) * 0.08}>
+            <Reveal key={member.slug} delay={(i % 5) * 0.06}>
               <TeamCard {...member} />
             </Reveal>
           ))}
