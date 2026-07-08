@@ -48,14 +48,15 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 md:pt-4">
+    <header className="fixed inset-x-0 top-0 z-50">
       <nav
-        className={`mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 rounded-[1.4rem] border pl-5 pr-3 transition-all duration-500 md:h-[4.75rem] md:pl-8 md:pr-4 ${
+        className={`w-full border-b bg-warm-white/95 backdrop-blur-md transition-shadow duration-500 ${
           scrolled
-            ? "border-graphite/10 bg-warm-white/85 shadow-lift backdrop-blur-xl"
-            : "border-graphite/[0.06] bg-warm-white/65 shadow-soft backdrop-blur-md"
+            ? "border-graphite/10 shadow-soft"
+            : "border-graphite/[0.06]"
         }`}
       >
+        <div className="container-page flex h-16 items-center justify-between gap-4 md:h-20">
           <Wordmark />
 
           {/* Desktop links — one line, ≤80px tall */}
@@ -95,6 +96,7 @@ export default function Navbar() {
           >
             {open ? <X size={24} /> : <List size={26} />}
           </button>
+        </div>
       </nav>
 
       {/* Menú mobile — panel flotante debajo del navbar (mismo estilo) */}
@@ -106,9 +108,9 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto mt-2 max-w-6xl overflow-hidden rounded-[1.25rem] border border-graphite/10 bg-warm-white/95 p-3 shadow-lift backdrop-blur-xl lg:hidden"
+            className="w-full overflow-hidden border-b border-graphite/10 bg-warm-white/98 shadow-soft backdrop-blur-xl lg:hidden"
           >
-            <ul className="flex flex-col">
+            <ul className="container-page flex flex-col py-3">
               {links.map((l) => (
                 <li key={l.to}>
                   <NavLink
@@ -128,7 +130,7 @@ export default function Navbar() {
                 </li>
               ))}
             </ul>
-            <div className="mt-2 px-1 pb-1">
+            <div className="container-page pb-4">
               <Button
                 to="/contacto"
                 variant="primary"
