@@ -5,7 +5,6 @@ import {
   InstagramLogo,
   NavigationArrow,
 } from "@phosphor-icons/react";
-import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import Button from "../components/Button";
 import { MapPanel } from "./Home";
@@ -15,13 +14,34 @@ import sucursal from "../assets/sucursal.webp";
 export default function Ubicacion() {
   return (
     <>
-      <PageHero
-        eyebrow="Ubicación"
-        title="Estamos en Fisherton"
-        subtitle="Un espacio cómodo, privado y accesible para cuidar tu piel con atención profesional."
-        seed="fisherton-neighbourhood-soft"
-        imageAlt="El barrio de Fisherton"
-      />
+      {/* Hero con la foto real de la sede, a tamaño natural (sin recortar) */}
+      <section className="relative overflow-hidden bg-warm-white pt-28 md:pt-32">
+        <div className="container-page pb-16 md:pb-24">
+          <div className="max-w-2xl">
+            <Reveal>
+              <span className="eyebrow">Ubicación</span>
+            </Reveal>
+            <Reveal delay={0.05}>
+              <h1 className="mt-5 text-[2.4rem] leading-[1.05] sm:text-5xl md:text-[3.4rem]">
+                Estamos en Fisherton
+              </h1>
+            </Reveal>
+            <Reveal delay={0.12}>
+              <p className="mt-6 max-w-lg text-lg leading-relaxed text-brown/75">
+                Un espacio cómodo, privado y accesible para cuidar tu piel con
+                atención profesional.
+              </p>
+            </Reveal>
+          </div>
+          <Reveal delay={0.16} y={28} className="mt-10 md:mt-12">
+            <img
+              src={sucursal}
+              alt="Sede de Dermafisherton en Schweitzer 8883, Fisherton"
+              className="h-auto w-full rounded-3xl border border-cream"
+            />
+          </Reveal>
+        </div>
+      </section>
 
       <section className="container-page py-16 md:py-24">
         <div className="grid gap-10 md:grid-cols-12 md:gap-14">
