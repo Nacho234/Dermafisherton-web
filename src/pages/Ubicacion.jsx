@@ -1,0 +1,130 @@
+import {
+  MapPinLine,
+  Clock,
+  WhatsappLogo,
+  InstagramLogo,
+  NavigationArrow,
+} from "@phosphor-icons/react";
+import PageHero from "../components/PageHero";
+import Reveal from "../components/Reveal";
+import Button from "../components/Button";
+import { MapPanel } from "./Home";
+import { site, waLink } from "../data/site";
+
+export default function Ubicacion() {
+  return (
+    <>
+      <PageHero
+        eyebrow="Ubicación"
+        title="Estamos en Fisherton"
+        subtitle="Un espacio cómodo, privado y accesible para cuidar tu piel con atención profesional."
+        seed="fisherton-neighbourhood-soft"
+        imageAlt="El barrio de Fisherton"
+      />
+
+      <section className="container-page py-16 md:py-24">
+        <div className="grid gap-10 md:grid-cols-12 md:gap-14">
+          {/* Info */}
+          <div className="md:col-span-5">
+            <div className="space-y-8">
+              <Reveal>
+                <div className="flex items-start gap-4">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-sage/20 text-sage-deep">
+                    <MapPinLine size={22} weight="light" />
+                  </span>
+                  <div>
+                    <h3 className="text-lg text-graphite">Dirección</h3>
+                    <p className="mt-1 text-brown/75">{site.address}</p>
+                  </div>
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.06}>
+                <div className="flex items-start gap-4">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-sage/20 text-sage-deep">
+                    <Clock size={22} weight="light" />
+                  </span>
+                  <div className="w-full">
+                    <h3 className="text-lg text-graphite">Horarios</h3>
+                    <ul className="mt-2 space-y-2">
+                      {site.hours.map((h) => (
+                        <li
+                          key={h.day}
+                          className="flex justify-between gap-4 border-b border-cream pb-2 text-[0.98rem] text-brown/75"
+                        >
+                          <span>{h.day}</span>
+                          <span className="text-brown/55">{h.value}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.12}>
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href={waLink()}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-brown transition-colors hover:text-sage-deep"
+                  >
+                    <WhatsappLogo size={20} className="text-sage-deep" /> WhatsApp
+                  </a>
+                  <a
+                    href={site.instagram}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-brown transition-colors hover:text-sage-deep"
+                  >
+                    <InstagramLogo size={20} className="text-sage-deep" />{" "}
+                    {site.instagramHandle}
+                  </a>
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.16}>
+                <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+                  <Button href={site.mapsLink} target="_blank" rel="noreferrer" variant="primary" size="md">
+                    <NavigationArrow size={18} weight="fill" /> Abrir en Google Maps
+                  </Button>
+                  <Button to="/contacto" variant="outline" size="md">
+                    Reservar turno
+                  </Button>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+
+          {/* Map */}
+          <Reveal className="md:col-span-7" y={24}>
+            <MapPanel />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* WhatsApp band */}
+      <section className="border-t border-cream bg-cream-soft/40">
+        <div className="container-page flex flex-col items-center justify-between gap-6 py-14 text-center md:flex-row md:text-left">
+          <div>
+            <h2 className="text-2xl text-graphite sm:text-3xl">
+              ¿Querés coordinar tu visita?
+            </h2>
+            <p className="mt-2 text-brown/70">
+              La forma más rápida de coordinar tu turno es por WhatsApp.
+            </p>
+          </div>
+          <Button
+            href={waLink("Hola, quisiera coordinar una visita.")}
+            target="_blank"
+            rel="noreferrer"
+            variant="sage"
+            size="lg"
+          >
+            <WhatsappLogo size={20} weight="fill" /> Consultar por WhatsApp
+          </Button>
+        </div>
+      </section>
+    </>
+  );
+}

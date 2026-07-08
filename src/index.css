@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+/* Self-hosted fonts (no external <link>) */
+@import "@fontsource/cormorant-garamond/400.css";
+@import "@fontsource/cormorant-garamond/500.css";
+@import "@fontsource/cormorant-garamond/600.css";
+@import "@fontsource-variable/manrope";
+
+/* ------------------------------------------------------------------ */
+/*  Design tokens — Dermafisherton                                     */
+/*  ONE warm-neutral palette, sage as the single locked accent.        */
+/* ------------------------------------------------------------------ */
+@theme {
+  /* Backgrounds are pure white across the whole page (client request). */
+  --color-warm-white: #ffffff;
+  --color-cream: #ece4da; /* warm hairline / border only */
+  --color-cream-soft: #ffffff; /* section fills stay pure white */
+  --color-taupe: #9b8574;
+  --color-brown: #4b3f38;
+  --color-sage: #a8b8a1;
+  --color-sage-deep: #7d9174;
+  --color-graphite: #2c2c2c;
+
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* One radius scale, soft + generous */
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+  --radius-3xl: 2.5rem;
+
+  /* Tinted, never pure-black shadows */
+  --shadow-soft: 0 1px 2px rgba(75, 63, 56, 0.04),
+    0 12px 32px -12px rgba(75, 63, 56, 0.12);
+  --shadow-lift: 0 2px 4px rgba(75, 63, 56, 0.05),
+    0 24px 48px -20px rgba(75, 63, 56, 0.18);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-warm-white);
+    color: var(--color-brown);
+    font-family: var(--font-sans);
+    font-feature-settings: " cv11", "ss01";
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-sage) 45%, transparent);
+    color: var(--color-brown);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-graphite);
+  }
+
+  /* Accessible focus ring, sage, never removed */
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-sage-deep);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+
+  /* Editorial small label. Rationed per Taste Skill (max 1 / 3 sections). */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-taupe);
+  }
+
+  .container-page {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .container-page { padding-inline: 2.5rem; }
+  }
+
+  /* Warm editorial scrim so placeholder photography still reads on-brand */
+  .img-scrim::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      160deg,
+      rgba(250, 247, 242, 0.12) 0%,
+      rgba(155, 133, 116, 0.14) 55%,
+      rgba(75, 63, 56, 0.28) 100%
+    );
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+}
+
+/* Respect reduced motion globally as a safety net */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
