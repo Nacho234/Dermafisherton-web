@@ -196,32 +196,101 @@ function QualitiesMarquee() {
 // (ej. "/circulos/dermatologia.webp" dentro de public/circulos/); si queda
 // vacío usa un placeholder.
 const circleHighlights = [
-  { title: "Dermatología clínica", img: "", seed: "circle-dermatologia" },
-  { title: "Estética facial", img: "", seed: "circle-estetica" },
-  { title: "Tecnología estética", img: "", seed: "circle-tecnologia" },
+  {
+    title: "Dermatología clínica",
+    text: "Diagnóstico y cuidado de la salud de tu piel.",
+    img: "/circulos/1.webp",
+    to: "/tratamientos#dermatologia-clinica",
+    seed: "circle-dermatologia",
+  },
+  {
+    title: "Estética facial",
+    text: "Tratamientos faciales indicados según tu piel.",
+    img: "/circulos/2.webp",
+    to: "/tratamientos#estetica-facial",
+    seed: "circle-estetica",
+  },
+  {
+    title: "Tecnología estética",
+    text: "Protocolos y aparatología modernos y seguros.",
+    img: "/circulos/3.webp",
+    to: "/tecnologia",
+    seed: "circle-tecnologia",
+  },
 ];
 
 function Differentiators() {
   return (
     <section className="border-y border-cream bg-cream-soft/40">
-      <div className="container-page py-20 md:py-28">
-        <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-3 md:gap-10 lg:gap-12">
+      <div className="mx-auto max-w-[1360px] px-4 py-20 md:px-10 md:py-28">
+        {/* Encabezado de la sección */}
+        <Reveal className="mx-auto mb-14 max-w-2xl text-center md:mb-20">
+          {/* eyebrow entre líneas */}
+          <div className="flex items-center justify-center gap-4">
+            <span className="h-px w-8 bg-sage-deep/40 md:w-12" />
+            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-sage-deep">
+              Especialidades
+            </span>
+            <span className="h-px w-8 bg-sage-deep/40 md:w-12" />
+          </div>
+          {/* título */}
+          <h2 className="mt-5 text-3xl leading-tight sm:text-4xl md:text-[2.75rem]">
+            Nuestras especialidades
+          </h2>
+          {/* texto */}
+          <p className="mx-auto mt-4 max-w-xl text-[1.05rem] leading-relaxed text-brown/75">
+            Tres áreas de atención pensadas para lo que tu piel necesita. Elegí
+            una y conocé los tratamientos.
+          </p>
+        </Reveal>
+
+        <div className="mx-auto grid gap-12 md:grid-cols-3 md:gap-8 lg:gap-10">
           {circleHighlights.map((c, i) => (
             <Reveal key={c.title} delay={i * 0.1}>
-              <div className="flex flex-col items-center text-center">
-                <EditorialImage
-                  src={c.img || undefined}
-                  seed={c.seed}
-                  w={700}
-                  h={700}
+              <div className="group relative aspect-square w-full overflow-hidden rounded-3xl shadow-lift ring-1 ring-black/[0.04]">
+                {/* 1 · foto de la card */}
+                <img
+                  src={c.img}
                   alt={c.title}
-                  scrim={false}
-                  rounded="rounded-full"
-                  className="aspect-square w-72 shadow-lift ring-1 ring-black/[0.04] md:w-full"
+                  loading="lazy"
+                  className="h-full w-full object-cover"
                 />
-                <h3 className="mt-6 text-xl text-graphite md:text-2xl">
-                  {c.title}
-                </h3>
+                {/* 2 · card dentro de la card: panel blanco con top curvo (swoosh) */}
+                <div className="absolute inset-x-0 bottom-0">
+                  <svg
+                    viewBox="0 0 100 26"
+                    preserveAspectRatio="none"
+                    className="block h-14 w-full md:h-16"
+                    aria-hidden
+                  >
+                    <path
+                      d="M0,26 L0,4 L32,4 C42,4 42,16 52,16 L100,16 L100,26 Z"
+                      fill="#ffffff"
+                    />
+                  </svg>
+                  <div className="-mt-px bg-white px-6 pb-6">
+                    <h3 className="font-display text-xl text-graphite md:text-2xl">
+                      {c.title}
+                    </h3>
+                    {c.text && (
+                      // Colapsa en PC (solo título) y se despliega al hover.
+                      <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr]">
+                        <div className="overflow-hidden">
+                          <p className="max-w-[26ch] pt-1 text-sm leading-snug text-brown/65 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100">
+                            {c.text}
+                          </p>
+                          <Link
+                            to={c.to}
+                            className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-sage-deep transition-all duration-300 hover:gap-2.5 hover:text-brown md:opacity-0 md:group-hover:opacity-100"
+                          >
+                            Más información
+                            <ArrowRight size={16} weight="bold" />
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </Reveal>
           ))}
