@@ -216,7 +216,7 @@ function Differentiators() {
                   h={700}
                   alt={c.title}
                   scrim={false}
-                  rounded="rounded-full"
+                  rounded="rounded-3xl"
                   className="aspect-square w-80 max-w-full shadow-lift ring-1 ring-black/[0.04] md:w-full"
                 />
                 <h3 className="mt-6 text-xl text-graphite md:text-2xl">
