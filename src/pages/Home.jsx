@@ -153,6 +153,44 @@ function Hero() {
   );
 }
 
+/* ----------------- Carrusel de cualidades (bajo el hero) ---------------- */
+const qualities = [
+  { e: "✨", t: "Resultados naturales" },
+  { e: "🌿", t: "Criterio dermatológico" },
+  { e: "🤍", t: "Atención personalizada" },
+  { e: "🔬", t: "Tecnología estética" },
+  { e: "💧", t: "Cuidado de la piel" },
+  { e: "⚕️", t: "Evaluación profesional" },
+  { e: "📍", t: "En Fisherton" },
+  { e: "🕊️", t: "Acompañamiento cercano" },
+];
+
+function QualitiesMarquee() {
+  const reduce = useReducedMotion();
+  const track = [...qualities, ...qualities];
+  return (
+    <section className="border-y border-graphite/[0.07] bg-warm-white">
+      <div className="relative overflow-hidden py-5 md:py-6">
+        {/* fundidos en los bordes */}
+        <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-warm-white to-transparent md:w-24" />
+        <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-warm-white to-transparent md:w-24" />
+        <motion.ul
+          className="flex w-max items-center gap-10 whitespace-nowrap md:gap-14"
+          animate={reduce ? undefined : { x: ["0%", "-50%"] }}
+          transition={{ duration: 42, ease: "linear", repeat: Infinity }}
+        >
+          {track.map((q, i) => (
+            <li key={i} className="flex items-center gap-2.5">
+              <span className="text-base md:text-lg" aria-hidden>{q.e}</span>
+              <span className="text-[0.95rem] font-medium text-brown md:text-base">{q.t}</span>
+            </li>
+          ))}
+        </motion.ul>
+      </div>
+    </section>
+  );
+}
+
 /* --------------------------- Diferenciales ------------------------------ */
 function Differentiators() {
   return (
@@ -401,6 +439,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <QualitiesMarquee />
       <Differentiators />
       <Featured />
       <Approach />
