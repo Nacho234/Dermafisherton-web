@@ -22,7 +22,8 @@ import CTASection from "../components/CTASection";
 import { featured } from "../data/treatments";
 import { testimonials, differentiators, process } from "../data/content";
 import { site, waLink } from "../data/site";
-import heroPortrait from "../assets/hero-portrait.webp";
+
+const heroPortrait = "/hero/hero-portrait.webp";
 
 const icons = { Stethoscope, HandHeart, Sparkle, MapPinLine };
 
@@ -106,10 +107,10 @@ const annotationsMobile = [
 function Hero() {
   return (
     <section className="relative overflow-hidden bg-warm-white">
-      <div className="container-page relative grid items-center gap-12 pt-28 pb-0 md:min-h-[calc(100dvh-76px)] md:grid-cols-12 md:gap-10 md:pt-0 md:pb-20">
+      <div className="container-page relative grid items-center gap-12 pt-28 pb-0 md:min-h-[calc(100dvh-76px)] md:grid-cols-12 md:items-start md:gap-10 md:pt-[6.5rem] md:pb-20">
         {/* DESKTOP: panel de imagen de altura contenida, ocupando todo el ancho
             del container y centrado verticalmente. Acomodá con objectPosition. */}
-        <div className="pointer-events-none absolute inset-x-0 top-[7rem] bottom-0 hidden overflow-hidden rounded-3xl md:block">
+        <div className="pointer-events-none absolute inset-x-0 top-[5.5rem] bottom-0 hidden overflow-hidden rounded-3xl md:block">
           <img
             src={heroPortrait}
             alt="Cuidado profesional de la piel en Dermafisherton, Fisherton"
@@ -169,7 +170,7 @@ function Hero() {
         </div>
 
         {/* Callouts sobre la cara (PC, etiquetas a la derecha) */}
-        <div className="absolute inset-x-0 top-[7rem] bottom-0 z-20 hidden md:block">
+        <div className="absolute inset-x-0 top-[5.5rem] bottom-0 z-20 hidden md:block">
           <HeroAnnotations items={annotationsDesktop} side="right" />
         </div>
       </div>
