@@ -192,26 +192,40 @@ function QualitiesMarquee() {
 }
 
 /* --------------------------- Diferenciales ------------------------------ */
+// 3 círculos con imagen adentro. Poné la imagen real en `img`
+// (ej. "/circulos/dermatologia.webp" dentro de public/circulos/); si queda
+// vacío usa un placeholder.
+const circleHighlights = [
+  { title: "Dermatología clínica", img: "", seed: "circle-dermatologia" },
+  { title: "Estética facial", img: "", seed: "circle-estetica" },
+  { title: "Tecnología estética", img: "", seed: "circle-tecnologia" },
+];
+
 function Differentiators() {
   return (
     <section className="border-y border-cream bg-cream-soft/40">
-      <div className="container-page grid gap-x-8 gap-y-12 py-16 md:grid-cols-2 md:py-24 lg:grid-cols-4">
-        {differentiators.map((d, i) => {
-          const Icon = icons[d.icon];
-          return (
-            <Reveal key={d.title} delay={i * 0.08}>
-              <div className="flex h-full flex-col">
-                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-warm-white text-sage-deep shadow-soft">
-                  <Icon size={24} weight="light" />
-                </span>
-                <h3 className="mt-5 text-xl text-graphite">{d.title}</h3>
-                <p className="mt-2.5 text-[0.95rem] leading-relaxed text-brown/70">
-                  {d.text}
-                </p>
+      <div className="container-page py-20 md:py-28">
+        <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-3 md:gap-10 lg:gap-12">
+          {circleHighlights.map((c, i) => (
+            <Reveal key={c.title} delay={i * 0.1}>
+              <div className="flex flex-col items-center text-center">
+                <EditorialImage
+                  src={c.img || undefined}
+                  seed={c.seed}
+                  w={700}
+                  h={700}
+                  alt={c.title}
+                  scrim={false}
+                  rounded="rounded-full"
+                  className="aspect-square w-72 shadow-lift ring-1 ring-black/[0.04] md:w-full"
+                />
+                <h3 className="mt-6 text-xl text-graphite md:text-2xl">
+                  {c.title}
+                </h3>
               </div>
             </Reveal>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );
