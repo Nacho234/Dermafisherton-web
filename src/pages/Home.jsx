@@ -15,8 +15,6 @@ import {
   SealCheck,
   Leaf,
   Star,
-  CaretLeft,
-  CaretRight,
 } from "@phosphor-icons/react";
 
 import Reveal from "../components/Reveal";
@@ -745,26 +743,33 @@ function Testimonials() {
         className="mx-auto"
       />
 
-      <div className="relative mx-auto mt-14 max-w-3xl">
-        {/* Flechas (desktop) */}
-        <button
-          type="button"
-          onClick={() => paginate(-1)}
-          aria-label="Testimonio anterior"
-          className="absolute -left-2 top-1/2 hidden -translate-y-1/2 place-items-center rounded-full border border-cream p-3 text-brown/70 transition-colors hover:border-brown hover:text-brown md:grid lg:-left-8"
-        >
-          <CaretLeft size={18} weight="bold" />
-        </button>
-        <button
-          type="button"
-          onClick={() => paginate(1)}
-          aria-label="Testimonio siguiente"
-          className="absolute -right-2 top-1/2 hidden -translate-y-1/2 place-items-center rounded-full border border-cream p-3 text-brown/70 transition-colors hover:border-brown hover:text-brown md:grid lg:-right-8"
-        >
-          <CaretRight size={18} weight="bold" />
-        </button>
+      {/* Desktop: grilla de 3 cards */}
+      <div className="mt-14 hidden gap-6 md:grid md:grid-cols-3">
+        {testimonials.map((item, idx) => (
+          <Reveal key={item.quote} delay={idx * 0.1}>
+            <figure className="flex h-full flex-col rounded-3xl border border-cream bg-warm-white p-8 shadow-soft">
+              <div className="flex gap-1 text-sage-deep">
+                {Array.from({ length: 5 }).map((_, s) => (
+                  <Star key={s} size={16} weight="fill" />
+                ))}
+              </div>
+              <blockquote className="mt-5 flex-1 font-display text-xl leading-snug text-graphite">
+                &ldquo;{item.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-6 border-t border-cream pt-5">
+                <span className="block font-semibold text-brown">{item.name}</span>
+                <span className="mt-1 block text-xs uppercase tracking-[0.14em] text-taupe">
+                  {item.detail}
+                </span>
+              </figcaption>
+            </figure>
+          </Reveal>
+        ))}
+      </div>
 
-        <div className="overflow-hidden px-2 sm:px-8 md:rounded-3xl md:border md:border-cream md:bg-warm-white md:px-14 md:py-16 md:shadow-soft">
+      {/* Mobile: carrusel destacado (drag + puntitos) */}
+      <div className="mx-auto mt-12 max-w-xl md:hidden">
+        <div className="overflow-hidden px-2">
           <AnimatePresence custom={dir} mode="wait" initial={false}>
             <motion.figure
               key={index}
