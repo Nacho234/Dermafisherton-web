@@ -6,6 +6,7 @@ import SectionHeader from "../components/SectionHeader";
 import EditorialImage from "../components/EditorialImage";
 import CTASection from "../components/CTASection";
 import TeamSection from "../components/TeamSection";
+import salaEspera from "../assets/sala-espera.webp";
 
 const philosophy = [
   {
@@ -41,10 +42,11 @@ export default function Nosotros() {
         <div className="grid items-center gap-12 md:grid-cols-12 md:gap-16">
           <Reveal className="md:col-span-5" y={26}>
             <EditorialImage
-              seed="skincare-space-detail"
+              src={salaEspera}
               w={800}
               h={950}
-              alt="Un espacio pensado para cuidar la piel"
+              alt="Sala de espera de Dermafisherton con vista al atardecer"
+              scrim={false}
               className="aspect-[4/5] w-full"
             />
           </Reveal>
