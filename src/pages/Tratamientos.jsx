@@ -4,6 +4,8 @@ import Reveal from "../components/Reveal";
 import EditorialImage from "../components/EditorialImage";
 import CTASection from "../components/CTASection";
 import TreatmentClips from "../components/TreatmentClips";
+import BeforeAfter from "../components/BeforeAfter";
+import { beforeAfter } from "../data/beforeAfter";
 import { categories } from "../data/treatments";
 import { waLink } from "../data/site";
 
@@ -80,13 +82,20 @@ export default function Tratamientos() {
                     </p>
                   </Reveal>
                   <Reveal delay={0.1}>
-                    <EditorialImage
-                      seed={cat.seed}
-                      w={700}
-                      h={520}
-                      alt={cat.title}
-                      className="mt-7 aspect-[4/3] w-full"
-                    />
+                    {beforeAfter[cat.slug] ? (
+                      <BeforeAfter
+                        pairs={beforeAfter[cat.slug]}
+                        className="mt-7"
+                      />
+                    ) : (
+                      <EditorialImage
+                        seed={cat.seed}
+                        w={700}
+                        h={520}
+                        alt={cat.title}
+                        className="mt-7 aspect-[4/3] w-full"
+                      />
+                    )}
                   </Reveal>
                 </div>
               </div>
