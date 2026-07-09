@@ -1,9 +1,60 @@
-import { Cpu, ShieldCheck, UserFocus, HeartHalf } from "@phosphor-icons/react";
+import {
+  Cpu,
+  ShieldCheck,
+  UserFocus,
+  HeartHalf,
+  Sparkle,
+  Drop,
+  Leaf,
+  FirstAid,
+  Heart,
+  CheckCircle,
+  FlowerLotus,
+  HandHeart,
+} from "@phosphor-icons/react";
+import { motion, useReducedMotion } from "motion/react";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import EditorialImage from "../components/EditorialImage";
 import SectionHeader from "../components/SectionHeader";
 import CTASection from "../components/CTASection";
+
+// Íconos flotantes alrededor de la profesional del hero.
+const floatingIcons = [
+  { icon: Sparkle, pos: "left-[3%] top-[5%]", size: "h-14 w-14", d: 0 },
+  { icon: Drop, pos: "left-[1%] top-[25%]", size: "h-12 w-12", d: 0.9 },
+  { icon: ShieldCheck, pos: "left-[2%] top-[46%]", size: "h-14 w-14", d: 1.7 },
+  { icon: Leaf, pos: "left-[3%] top-[66%]", size: "h-12 w-12", d: 0.5 },
+  { icon: FirstAid, pos: "left-[6%] top-[84%]", size: "h-14 w-14", d: 1.3 },
+  { icon: UserFocus, pos: "right-[3%] top-[6%]", size: "h-14 w-14", d: 0.7 },
+  { icon: Heart, pos: "right-[1%] top-[26%]", size: "h-12 w-12", d: 1.5 },
+  { icon: CheckCircle, pos: "right-[2%] top-[46%]", size: "h-14 w-14", d: 0.2 },
+  { icon: FlowerLotus, pos: "right-[3%] top-[65%]", size: "h-12 w-12", d: 1.1 },
+  { icon: HandHeart, pos: "right-[5%] top-[83%]", size: "h-14 w-14", d: 1.9 },
+];
+
+function FloatingIcons() {
+  const reduce = useReducedMotion();
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0">
+      {floatingIcons.map(({ icon: Icon, pos, size, d }, i) => (
+        <motion.span
+          key={i}
+          animate={reduce ? undefined : { y: [0, -9, 0] }}
+          transition={{
+            duration: 4.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: d,
+          }}
+          className={`absolute ${pos} ${size} grid place-items-center rounded-full border border-cream bg-white/90 text-taupe/80 shadow-soft backdrop-blur-sm`}
+        >
+          <Icon size={24} weight="light" />
+        </motion.span>
+      ))}
+    </div>
+  );
+}
 
 const blocks = [
   {
@@ -39,6 +90,7 @@ export default function Tecnologia() {
         scrim={false}
         imgClassName="aspect-[4/5] w-full"
         imageAlt="Profesional de Dermafisherton"
+        imageOverlay={<FloatingIcons />}
       />
 
       {/* 4 principle blocks — bento with rhythm */}

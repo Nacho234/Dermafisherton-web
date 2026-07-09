@@ -15,6 +15,8 @@ export default function PageHero({
   // Opcional: video en lugar de imagen (reproduce muteado en loop)
   video,
   videoPoster,
+  // Opcional: elementos superpuestos sobre la imagen (p. ej. íconos flotantes)
+  imageOverlay,
 }) {
   return (
     <section className="relative overflow-hidden bg-warm-white pt-28 md:pt-32">
@@ -40,7 +42,7 @@ export default function PageHero({
         </div>
 
         <div className="md:col-span-6 lg:col-span-6">
-          <Reveal delay={0.1} y={28}>
+          <Reveal delay={0.1} y={28} className="relative">
             {video ? (
               <video
                 src={video}
@@ -67,6 +69,7 @@ export default function PageHero({
                 className={imgClassName}
               />
             )}
+            {imageOverlay}
           </Reveal>
         </div>
       </div>
