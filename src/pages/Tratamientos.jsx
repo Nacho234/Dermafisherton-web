@@ -55,7 +55,7 @@ export default function Tratamientos() {
         subtitle="Cada procedimiento se indica según una evaluación previa, buscando seguridad, naturalidad y resultados armónicos."
         video={heroClip.video}
         videoPoster={heroClip.poster}
-        imgClassName="aspect-[4/5] w-full"
+        imgClassName="mx-auto aspect-[9/16] w-full max-w-[420px]"
         imageAlt="HIFU facial en Dermafisherton"
       />
 
