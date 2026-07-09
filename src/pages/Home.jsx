@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
   Stethoscope,
   HandHeart,
@@ -14,6 +14,9 @@ import {
   ShieldCheck,
   SealCheck,
   Leaf,
+  Star,
+  CaretLeft,
+  CaretRight,
 } from "@phosphor-icons/react";
 
 import Reveal from "../components/Reveal";
@@ -711,7 +714,29 @@ function AboutTeaser() {
 }
 
 /* ---------------------------- Testimonios ------------------------------- */
+const testimonialVariants = {
+  enter: (d) => ({ opacity: 0, x: d > 0 ? 48 : -48 }),
+  center: { opacity: 1, x: 0 },
+  exit: (d) => ({ opacity: 0, x: d > 0 ? -48 : 48 }),
+};
+
 function Testimonials() {
+  const reduce = useReducedMotion();
+  const [[index, dir], setState] = useState([0, 0]);
+  const n = testimonials.length;
+
+  const paginate = (d) => setState(([prev]) => [(prev + d + n) % n, d]);
+  const goTo = (idx) => setState(([prev]) => [idx, idx >= prev ? 1 : -1]);
+
+  // Autoplay suave (pausado si el usuario prefiere menos movimiento)
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(() => setState(([prev]) => [(prev + 1) % n, 1]), 6500);
+    return () => clearInterval(id);
+  }, [reduce, n]);
+
+  const t = testimonials[index];
+
   return (
     <section className="container-page py-20 md:py-28">
       <SectionHeader
@@ -719,12 +744,78 @@ function Testimonials() {
         align="center"
         className="mx-auto"
       />
-      <div className="mt-12 grid gap-6 md:grid-cols-3">
-        {testimonials.map((t, i) => (
-          <Reveal key={t.quote} delay={i * 0.1}>
-            <TestimonialCard {...t} />
-          </Reveal>
-        ))}
+
+      <div className="relative mx-auto mt-14 max-w-3xl">
+        {/* Flechas (desktop) */}
+        <button
+          type="button"
+          onClick={() => paginate(-1)}
+          aria-label="Testimonio anterior"
+          className="absolute -left-2 top-1/2 hidden -translate-y-1/2 place-items-center rounded-full border border-cream p-3 text-brown/70 transition-colors hover:border-brown hover:text-brown md:grid lg:-left-8"
+        >
+          <CaretLeft size={18} weight="bold" />
+        </button>
+        <button
+          type="button"
+          onClick={() => paginate(1)}
+          aria-label="Testimonio siguiente"
+          className="absolute -right-2 top-1/2 hidden -translate-y-1/2 place-items-center rounded-full border border-cream p-3 text-brown/70 transition-colors hover:border-brown hover:text-brown md:grid lg:-right-8"
+        >
+          <CaretRight size={18} weight="bold" />
+        </button>
+
+        <div className="overflow-hidden px-2 sm:px-8 md:rounded-3xl md:border md:border-cream md:bg-warm-white md:px-14 md:py-16 md:shadow-soft">
+          <AnimatePresence custom={dir} mode="wait" initial={false}>
+            <motion.figure
+              key={index}
+              custom={dir}
+              variants={reduce ? undefined : testimonialVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              drag={reduce ? false : "x"}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.18}
+              onDragEnd={(e, info) => {
+                if (info.offset.x < -60) paginate(1);
+                else if (info.offset.x > 60) paginate(-1);
+              }}
+              className="flex cursor-grab flex-col items-center text-center active:cursor-grabbing"
+            >
+              <div className="flex gap-1 text-sage-deep">
+                {Array.from({ length: 5 }).map((_, s) => (
+                  <Star key={s} size={18} weight="fill" />
+                ))}
+              </div>
+              <blockquote className="mt-7 max-w-2xl font-display text-2xl leading-snug text-graphite sm:text-3xl md:text-[2.1rem]">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-8">
+                <span className="block font-semibold text-brown">{t.name}</span>
+                <span className="mt-1 block text-xs uppercase tracking-[0.14em] text-taupe">
+                  {t.detail}
+                </span>
+              </figcaption>
+            </motion.figure>
+          </AnimatePresence>
+        </div>
+
+        {/* Puntitos */}
+        <div className="mt-10 flex justify-center gap-2">
+          {testimonials.map((item, idx) => (
+            <button
+              key={item.quote}
+              type="button"
+              onClick={() => goTo(idx)}
+              aria-label={`Testimonio ${idx + 1}`}
+              aria-current={index === idx}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === idx ? "w-6 bg-sage-deep" : "w-2 bg-brown/25"
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -798,9 +889,6 @@ export default function Home() {
       <Enfoque />
       <MosaicBento />
       <Featured />
-      <Approach />
-      <Process />
-      <AboutTeaser />
       <Testimonials />
       <CTASection />
       <LocationTeaser />
