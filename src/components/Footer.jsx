@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { InstagramLogo, WhatsappLogo, MapPinLine } from "@phosphor-icons/react";
 import { site, waLink } from "../data/site";
-import "@fontsource/great-vibes";
+import "@fontsource/whisper";
 
 const nav = [
   { to: "/nosotros", label: "Nosotros" },
@@ -20,8 +20,8 @@ export default function Footer() {
           {/* Logo de marca compuesto en tipografía (script + sans espaciada) */}
           <Link to="/" aria-label="Dermafisherton — Inicio" className="inline-block">
             <span
-              className="block text-[3.4rem] leading-none text-[#c68095] md:text-6xl"
-              style={{ fontFamily: "'Great Vibes', cursive" }}
+              className="block text-[3.6rem] leading-none text-[#c68095] md:text-[4.2rem]"
+              style={{ fontFamily: "'Whisper', cursive" }}
             >
               Derma
             </span>
