@@ -3,11 +3,22 @@ import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import EditorialImage from "../components/EditorialImage";
 import CTASection from "../components/CTASection";
-import TreatmentClips from "../components/TreatmentClips";
 import BeforeAfter from "../components/BeforeAfter";
 import { beforeAfter } from "../data/beforeAfter";
 import { categories } from "../data/treatments";
+import { clips } from "../data/clips";
 import { waLink } from "../data/site";
+
+// Clips reales distribuidos en la página (sin texto sobre los videos).
+// El hero lleva HIFU facial; cada categoría con placeholder recibe el clip
+// que mejor la representa. Las categorías con antes/después no se tocan.
+const clipBySlug = Object.fromEntries(clips.map((c) => [c.slug, c]));
+const heroClip = clipBySlug["hifu-facial"];
+const categoryClips = {
+  "dermatologia-clinica": clipBySlug["crio-radiofrecuencia"],
+  "peelings-manchas": clipBySlug["laser-harmony"],
+  "depilacion-laser": clipBySlug["hifu-corporal"],
+};
 
 function ServiceCard({ name, benefit, category }) {
   return (
@@ -42,8 +53,10 @@ export default function Tratamientos() {
         eyebrow="Tratamientos"
         title="Tratamientos dermatológicos y estéticos personalizados"
         subtitle="Cada procedimiento se indica según una evaluación previa, buscando seguridad, naturalidad y resultados armónicos."
-        seed="treatment-room-calm"
-        imageAlt="Sala de tratamientos de Dermafisherton"
+        video={heroClip.video}
+        videoPoster={heroClip.poster}
+        imgClassName="aspect-[4/5] w-full"
+        imageAlt="HIFU facial en Dermafisherton"
       />
 
       {/* Category index — scroll-snap pills */}
@@ -87,6 +100,18 @@ export default function Tratamientos() {
                         pairs={beforeAfter[cat.slug]}
                         className="mt-7"
                       />
+                    ) : categoryClips[cat.slug] ? (
+                      <video
+                        src={categoryClips[cat.slug].video}
+                        poster={categoryClips[cat.slug].poster}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="metadata"
+                        aria-label={cat.title}
+                        className="mt-7 aspect-[4/3] w-full rounded-3xl object-cover shadow-soft"
+                      />
                     ) : (
                       <EditorialImage
                         seed={cat.seed}
@@ -114,9 +139,6 @@ export default function Tratamientos() {
           </div>
         </section>
       ))}
-
-      {/* Tratamientos en acción — clips reales de la clínica */}
-      <TreatmentClips />
 
       {/* Page-specific note + CTA */}
       <section className="border-t border-cream">
