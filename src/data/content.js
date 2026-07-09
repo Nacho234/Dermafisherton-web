@@ -19,34 +19,47 @@ export const testimonials = [
   },
 ];
 
+export const faqCategories = [
+  { slug: "general", label: "General" },
+  { slug: "turnos", label: "Turnos y consultas" },
+  { slug: "resultados", label: "Resultados y cuidados" },
+];
+
 export const faqs = [
   {
+    cat: "general",
     q: "¿Necesito una consulta previa?",
     a: "Sí. Cada tratamiento parte de una evaluación profesional para entender tu piel, tus antecedentes y tus objetivos antes de indicar cualquier procedimiento.",
   },
   {
+    cat: "general",
     q: "¿Los tratamientos son personalizados?",
     a: "Siempre. No trabajamos con protocolos genéricos: definimos el plan más adecuado para cada persona según lo evaluado en la consulta.",
   },
   {
+    cat: "general",
+    q: "¿Puedo hacerme más de un tratamiento?",
+    a: "En muchos casos sí, siempre que la evaluación profesional lo indique. La prioridad es la seguridad y la coherencia del plan.",
+  },
+  {
+    cat: "turnos",
     q: "¿Puedo consultar por WhatsApp?",
     a: "Sí, es la forma más rápida de coordinar un turno o hacer una consulta inicial. Te orientamos sobre los próximos pasos.",
   },
   {
+    cat: "turnos",
     q: "¿Cuánto dura una sesión?",
     a: "Depende del tratamiento indicado. En la consulta te explicamos la duración estimada de cada procedimiento y del plan completo.",
   },
   {
+    cat: "resultados",
     q: "¿Qué cuidados debo tener después?",
     a: "Cada tratamiento tiene indicaciones posteriores específicas. Te acompañamos con recomendaciones claras para cuidar y mantener los resultados.",
   },
   {
+    cat: "resultados",
     q: "¿Cuándo se ven los resultados?",
     a: "Los resultados son variables según cada persona y cada tratamiento. En la evaluación te explicamos qué esperar de forma realista.",
-  },
-  {
-    q: "¿Puedo hacerme más de un tratamiento?",
-    a: "En muchos casos sí, siempre que la evaluación profesional lo indique. La prioridad es la seguridad y la coherencia del plan.",
   },
 ];
 
