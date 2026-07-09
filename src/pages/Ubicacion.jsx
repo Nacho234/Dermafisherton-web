@@ -18,6 +18,38 @@ import { MapPanel } from "./Home";
 import { site, waLink } from "../data/site";
 import sucursal from "../assets/sucursal.webp";
 import sedeExterior from "../assets/sede-exterior.webp";
+import reelUbicacion from "../assets/reel-ubicacion.mp4";
+import reelUbicacionPoster from "../assets/reel-ubicacion-poster.webp";
+
+const REEL_URL = "https://www.instagram.com/reel/DYmoODlgpqs/";
+
+// Card del reel de la sede: reproduce muteado y el clic abre Instagram.
+function ReelCard({ className = "" }) {
+  return (
+    <a
+      href={REEL_URL}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Ver el reel de la nueva sede en Instagram"
+      className={`group relative block overflow-hidden rounded-3xl border border-warm-white/25 shadow-lift transition-transform duration-500 ease-out hover:scale-[1.02] ${className}`}
+    >
+      <video
+        src={reelUbicacion}
+        poster={reelUbicacionPoster}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+        className="pointer-events-none h-full w-full object-cover"
+      />
+      <span className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-graphite/60 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm transition-colors duration-300 group-hover:bg-graphite/80">
+        <InstagramLogo size={15} weight="fill" /> Ver en Instagram
+      </span>
+    </a>
+  );
+}
 
 export default function Ubicacion() {
   // Parallax: la foto de la sede se mueve más lento que el scroll.
@@ -49,7 +81,7 @@ export default function Ubicacion() {
             className="absolute inset-0 bg-gradient-to-r from-brown/90 via-brown/55 to-brown/10"
           />
           <div className="absolute inset-0 flex items-center">
-            <div className="container-page">
+            <div className="container-page flex w-full items-center justify-between gap-10">
               <div className="max-w-xl text-warm-white">
                 <span className="text-xs font-semibold uppercase tracking-[0.22em] text-warm-white/80">
                   Ubicación
@@ -62,9 +94,17 @@ export default function Ubicacion() {
                   atención profesional.
                 </p>
               </div>
+
+              {/* Reel de la nueva sede (desktop): clic abre Instagram */}
+              <ReelCard className="hidden aspect-[9/16] h-[80%] max-h-[560px] shrink-0 md:block" />
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Reel de la nueva sede (mobile, bajo el hero) */}
+      <section className="container-page pt-10 md:hidden">
+        <ReelCard className="mx-auto aspect-[9/16] w-56" />
       </section>
 
       <section className="container-page py-16 md:py-24">
