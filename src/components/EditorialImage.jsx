@@ -27,7 +27,8 @@ export default function EditorialImage({
         height={h}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
-        style={{ objectPosition }}
+        draggable={false}
+        style={{ objectPosition, WebkitUserDrag: "none" }}
         className="h-full w-full object-cover"
       />
     </figure>
