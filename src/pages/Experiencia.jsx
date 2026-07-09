@@ -4,6 +4,8 @@ import SectionHeader from "../components/SectionHeader";
 import FAQAccordion from "../components/FAQAccordion";
 import CTASection from "../components/CTASection";
 import { faqs } from "../data/content";
+import experienciaClip from "../assets/experiencia-clip.mp4";
+import experienciaClipPoster from "../assets/experiencia-clip-poster.webp";
 
 const steps = [
   { n: "01", title: "Nos contás qué querés mejorar", text: "Escuchamos tus inquietudes y objetivos para tu piel." },
@@ -21,7 +23,8 @@ export default function Experiencia() {
         eyebrow="Experiencia"
         title="Una experiencia pensada para acompañarte desde la primera consulta"
         subtitle="Desde la evaluación inicial hasta el seguimiento posterior, cada paso cuida tu piel con claridad, seguridad y cercanía."
-        seed="patient-experience-calm"
+        video={experienciaClip}
+        videoPoster={experienciaClipPoster}
         imageAlt="Atención personalizada en Dermafisherton"
       />
 
