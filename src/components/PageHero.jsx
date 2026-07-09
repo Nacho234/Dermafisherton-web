@@ -12,6 +12,9 @@ export default function PageHero({
   scrim = true,
   imgClassName = "aspect-[5/4] w-full",
   objectPosition = "center",
+  // Opcional: video en lugar de imagen (reproduce muteado en loop)
+  video,
+  videoPoster,
 }) {
   return (
     <section className="relative overflow-hidden bg-warm-white pt-28 md:pt-32">
@@ -38,17 +41,32 @@ export default function PageHero({
 
         <div className="md:col-span-6 lg:col-span-6">
           <Reveal delay={0.1} y={28}>
-            <EditorialImage
-              src={src}
-              seed={seed}
-              w={1000}
-              h={800}
-              alt={imageAlt}
-              priority
-              scrim={scrim}
-              objectPosition={objectPosition}
-              className={imgClassName}
-            />
+            {video ? (
+              <video
+                src={video}
+                poster={videoPoster}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                aria-label={imageAlt}
+                style={{ objectPosition }}
+                className={`rounded-3xl object-cover shadow-soft ${imgClassName}`}
+              />
+            ) : (
+              <EditorialImage
+                src={src}
+                seed={seed}
+                w={1000}
+                h={800}
+                alt={imageAlt}
+                priority
+                scrim={scrim}
+                objectPosition={objectPosition}
+                className={imgClassName}
+              />
+            )}
           </Reveal>
         </div>
       </div>
