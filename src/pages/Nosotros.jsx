@@ -8,6 +8,12 @@ import CTASection from "../components/CTASection";
 import TeamSection from "../components/TeamSection";
 import salaEspera from "../assets/sala-espera.webp";
 
+const espacioTags = [
+  { e: "🌿", t: "Natural" },
+  { e: "🤍", t: "Cercano" },
+  { e: "✨", t: "Cuidado" },
+];
+
 const philosophy = [
   {
     icon: Eye,
@@ -33,22 +39,56 @@ export default function Nosotros() {
         eyebrow="Nosotros"
         title="Cuidado dermatológico con una mirada personalizada"
         subtitle="En Dermafisherton acompañamos a cada paciente con tratamientos indicados según su piel, sus objetivos y una evaluación profesional."
-        seed="dermatologist-consult-warm"
-        imageAlt="Consultorio de Dermafisherton en Fisherton"
+        src="/nosotros/consulta.png"
+        scrim={false}
+        imgClassName="aspect-[3/2] w-full"
+        imageAlt="Consulta profesional en Dermafisherton, Fisherton"
       />
 
       {/* Historia / concepto — editorial split */}
       <section className="container-page py-20 md:py-28">
         <div className="grid items-center gap-12 md:grid-cols-12 md:gap-16">
-          <Reveal className="md:col-span-5" y={26}>
+          <Reveal className="group relative overflow-hidden rounded-3xl md:col-span-5" y={26}>
             <EditorialImage
               src={salaEspera}
               w={800}
               h={950}
               alt="Sala de espera de Dermafisherton con vista al atardecer"
               scrim={false}
+              rounded="rounded-none"
               className="aspect-[4/5] w-full"
             />
+
+            {/* Opacidad gris */}
+            <span className="pointer-events-none absolute inset-0 bg-graphite/45" />
+            <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-graphite/80 via-graphite/10 to-graphite/30" />
+
+            {/* Texto centrado */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 bottom-16 flex flex-col items-center justify-center px-8 text-center">
+              <span className="mb-4 text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-white/70">
+                El espacio
+              </span>
+              <p className="font-display text-3xl leading-tight text-white sm:text-4xl">
+                Un ambiente cálido, pensado para vos
+              </p>
+            </div>
+
+            {/* Franja glass abajo con los símbolos */}
+            <div className="absolute inset-x-0 bottom-0 border-t border-white/20 bg-white/10 backdrop-blur-md">
+              <div className="flex items-center justify-center gap-4 px-5 py-4 text-sm font-medium text-white/95">
+                {espacioTags.map((tag, i) => (
+                  <span
+                    key={tag.t}
+                    className={`inline-flex items-center gap-1.5 ${
+                      i > 0 ? "border-l border-white/25 pl-4" : ""
+                    }`}
+                  >
+                    <span aria-hidden>{tag.e}</span>
+                    {tag.t}
+                  </span>
+                ))}
+              </div>
+            </div>
           </Reveal>
           <div className="md:col-span-7">
             <SectionHeader title="Un espacio pensado para cuidar tu piel" />

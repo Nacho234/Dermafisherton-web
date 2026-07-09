@@ -16,6 +16,7 @@ export const team = [
     name: "Dra. Clara Bernardini",
     role: "Dermatología",
     photo: clara,
+    focus: { zoom: 122, pos: "50% 18%" },
     bio: "Médica dermatóloga, dedicada a la salud y el cuidado de la piel.",
     bioLong:
       "Médica dermatóloga. Acompaña a cada paciente con una evaluación profesional previa, priorizando la salud de la piel y resultados naturales.",
@@ -29,6 +30,7 @@ export const team = [
     name: "Dr. Pablo Martínez Francesio",
     role: "Cirugía plástica",
     photo: pablo,
+    focus: { zoom: 105, pos: "50% 20%" },
     bio: "Cirujano plástico. Cirugías estéticas y reparadoras.",
     bioLong:
       "Cirujano plástico. Director del Centro de Cirugía Plástica y Láser, con foco en procedimientos estéticos y reparadores.",
@@ -42,6 +44,7 @@ export const team = [
     name: "Dra. Lucía Trossero",
     role: "Medicina estética",
     photo: lucia,
+    focus: { zoom: 185, pos: "48% 6%" },
     bio: "Medicina estética, nutrición y medicina ortomolecular.",
     bioLong:
       "Ciencia aplicada a tu piel: medicina estética, nutrición y medicina ortomolecular. Docente, con doctorado en Ciencias Biológicas.",
@@ -56,6 +59,7 @@ export const team = [
     name: "Patricia Suarez",
     role: "Bioquímica · Medicina regenerativa",
     photo: patricia,
+    focus: { zoom: 180, pos: "48% 10%" },
     bio: "Especialista en plasma rico en plaquetas y regeneración cutánea.",
     bioLong:
       "Especialista en plasma rico en plaquetas y regeneración cutánea basada en evidencia. Miembro del Comité de Bioquímica Regenerativa.",
@@ -70,6 +74,7 @@ export const team = [
     name: "Dra. Marina Berniche",
     role: "Oftalmología",
     photo: marina,
+    focus: { zoom: 195, pos: "47% 6%" },
     bio: "Médica oftalmóloga dedicada al cuidado de la salud visual.",
     bioLong:
       "Médica oftalmóloga dedicada al cuidado de la salud visual, con más de 20 años de experiencia.",

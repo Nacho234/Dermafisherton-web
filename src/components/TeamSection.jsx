@@ -5,19 +5,23 @@ import { team } from "../data/team";
 
 // Sección "Nuestro equipo": cards en fila (una al lado de la otra), con foto,
 // nombre y especialidad. Cada card lleva al perfil /equipo/<slug>.
-function TeamCard({ slug, name, role, photo }) {
+function TeamCard({ slug, name, role, photo, focus }) {
   return (
     <Link
       to={`/equipo/${slug}`}
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-cream bg-warm-white shadow-soft transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-sage/40 hover:shadow-lift"
     >
-      <div className="aspect-[4/5] w-full overflow-hidden bg-cream">
+      <div className="aspect-square w-full overflow-hidden bg-cream">
         {photo ? (
-          <img
-            src={photo}
-            alt={name}
-            loading="lazy"
-            className="h-full w-full object-cover object-center transition-transform duration-[900ms] ease-out group-hover:scale-[1.05]"
+          <div
+            role="img"
+            aria-label={name}
+            className="h-full w-full bg-no-repeat transition-transform duration-[900ms] ease-out group-hover:scale-[1.05]"
+            style={{
+              backgroundImage: `url(${photo})`,
+              backgroundSize: `${focus?.zoom ?? 100}%`,
+              backgroundPosition: focus?.pos ?? "50% 15%",
+            }}
           />
         ) : (
           <span className="grid h-full w-full place-items-center bg-sage/15 text-sage-deep">
@@ -64,7 +68,7 @@ export default function TeamSection() {
           </Reveal>
         </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
           {team.map((member, i) => (
             <Reveal key={member.slug} delay={(i % 5) * 0.06}>
               <TeamCard {...member} />
