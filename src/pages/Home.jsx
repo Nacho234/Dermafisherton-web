@@ -15,6 +15,7 @@ import {
   SealCheck,
   Leaf,
   Star,
+  CaretDown,
 } from "@phosphor-icons/react";
 
 import Reveal from "../components/Reveal";
@@ -26,7 +27,13 @@ import TestimonialCard from "../components/TestimonialCard";
 import CTASection from "../components/CTASection";
 
 import { featured } from "../data/treatments";
-import { testimonials, differentiators, process } from "../data/content";
+import {
+  testimonials,
+  differentiators,
+  process,
+  faqs,
+  faqCategories,
+} from "../data/content";
 import { site, waLink } from "../data/site";
 
 const heroPortrait = "/hero/hero-portrait.webp";
@@ -712,6 +719,128 @@ function AboutTeaser() {
 }
 
 /* ---------------------------- Testimonios ------------------------------- */
+/* --------------------------------- FAQ --------------------------------- */
+function FAQ() {
+  const reduce = useReducedMotion();
+  const [cat, setCat] = useState(faqCategories[0].slug);
+  const [open, setOpen] = useState(0);
+
+  const items = faqs.filter((f) => f.cat === cat);
+
+  const selectCat = (slug) => {
+    setCat(slug);
+    setOpen(0);
+  };
+
+  return (
+    <section className="container-page py-20 md:py-28">
+      <div className="grid gap-10 md:grid-cols-12 md:gap-14">
+        {/* Columna izquierda */}
+        <div className="md:col-span-4 md:sticky md:top-28 md:self-start">
+          <span className="inline-flex items-center gap-2 rounded-full border border-cream bg-warm-white px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.14em] text-taupe">
+            <span className="h-1.5 w-1.5 rounded-full bg-sage-deep" />
+            FAQ
+          </span>
+          <h2 className="mt-6 font-display text-3xl leading-[1.1] text-graphite sm:text-4xl md:text-[2.6rem]">
+            Respuestas a las dudas más frecuentes
+          </h2>
+          <p className="mt-5 max-w-md text-[1.02rem] leading-relaxed text-brown/70">
+            Todo lo que suele surgir antes de una consulta: cómo trabajamos, los
+            turnos y qué esperar de cada tratamiento.
+          </p>
+
+          {/* Categorías */}
+          <div className="mt-8 flex flex-col gap-1.5">
+            {faqCategories.map((c) => (
+              <button
+                key={c.slug}
+                type="button"
+                onClick={() => selectCat(c.slug)}
+                aria-pressed={cat === c.slug}
+                className={`rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors ${
+                  cat === c.slug
+                    ? "bg-sage/15 text-brown"
+                    : "text-taupe hover:bg-black/[0.03] hover:text-brown"
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Card de contacto */}
+          <div className="mt-8 rounded-2xl border border-cream bg-cream-soft/60 p-6">
+            <h3 className="font-display text-xl text-graphite">
+              ¿Te quedan dudas?
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-brown/70">
+              Escribinos y te ayudamos a coordinar tu consulta o a resolver
+              cualquier pregunta.
+            </p>
+            <a
+              href={waLink("Hola, tengo una consulta.")}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-sage-deep transition-colors hover:text-brown"
+            >
+              Escribinos
+              <ArrowRight size={15} weight="bold" />
+            </a>
+          </div>
+        </div>
+
+        {/* Columna derecha: acordeón */}
+        <div className="flex flex-col gap-3 md:col-span-8 md:mt-14 md:self-start">
+          {items.map((item, i) => {
+            const isOpen = open === i;
+            return (
+              <div
+                key={item.q}
+                className={`overflow-hidden rounded-2xl border border-cream transition-shadow ${
+                  isOpen ? "bg-warm-white shadow-soft" : "bg-cream-soft/50"
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpen(isOpen ? -1 : i)}
+                  aria-expanded={isOpen}
+                  className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left"
+                >
+                  <span className="font-medium text-graphite md:text-lg">
+                    {item.q}
+                  </span>
+                  <span
+                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-taupe/25 text-brown transition-transform duration-300 ${
+                      isOpen ? "rotate-180 bg-sage/20" : ""
+                    }`}
+                  >
+                    <CaretDown size={15} weight="bold" />
+                  </span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={reduce ? false : { height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <p className="px-6 pb-6 pr-12 leading-relaxed text-brown/75">
+                        {item.a}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 const testimonialVariants = {
   enter: (d) => ({ opacity: 0, x: d > 0 ? 48 : -48 }),
   center: { opacity: 1, x: 0 },
@@ -786,7 +915,7 @@ function Testimonials() {
                 if (info.offset.x < -60) paginate(1);
                 else if (info.offset.x > 60) paginate(-1);
               }}
-              className="flex cursor-grab flex-col items-center text-center active:cursor-grabbing"
+              className="flex cursor-grab flex-col items-center rounded-3xl border border-cream bg-warm-white px-6 py-10 text-center shadow-soft active:cursor-grabbing"
             >
               <div className="flex gap-1 text-sage-deep">
                 {Array.from({ length: 5 }).map((_, s) => (
@@ -894,6 +1023,7 @@ export default function Home() {
       <Enfoque />
       <MosaicBento />
       <Featured />
+      <FAQ />
       <Testimonials />
       <CTASection />
       <LocationTeaser />
