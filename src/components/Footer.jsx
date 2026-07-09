@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { InstagramLogo, WhatsappLogo, MapPinLine } from "@phosphor-icons/react";
 import { site, waLink } from "../data/site";
+import logoCursiva from "../assets/logo-cursiva.webp";
 
 const nav = [
   { to: "/nosotros", label: "Nosotros" },
@@ -16,9 +17,13 @@ export default function Footer() {
     <footer className="border-t border-cream bg-cream-soft/50">
       <div className="container-page grid gap-12 py-16 md:grid-cols-12 md:py-20">
         <div className="md:col-span-5">
-          <span className="font-display text-3xl font-semibold text-graphite">
-            Derma<span className="text-sage-deep">fisherton</span>
-          </span>
+          <Link to="/" aria-label="Dermafisherton — Inicio" className="inline-block">
+            <img
+              src={logoCursiva}
+              alt="Derma Fisherton"
+              className="h-20 w-auto md:h-24"
+            />
+          </Link>
           <p className="mt-5 max-w-sm text-[0.98rem] leading-relaxed text-brown/70">
             Cuidado dermatológico y estética con criterio profesional y
             resultados naturales, en Fisherton.
