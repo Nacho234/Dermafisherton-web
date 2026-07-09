@@ -439,15 +439,30 @@ function MosaicBento() {
       {/* Símbolos / sellos monocromáticos debajo de la imagen */}
       <div className="mx-auto mt-10 flex max-w-4xl flex-wrap items-start justify-center gap-x-10 gap-y-8 sm:mt-12 sm:gap-x-16">
         {mosaicBadges.map(({ Icon, label }, i) => (
-          <Reveal
-            key={label}
-            delay={i * 0.08}
-            className="flex w-28 flex-col items-center text-center"
-          >
-            <Icon size={34} weight="thin" className="text-graphite" />
-            <span className="mt-3 text-xs font-medium uppercase tracking-[0.12em] text-brown/70">
-              {label}
-            </span>
+          <Reveal key={label} delay={i * 0.08} className="w-28">
+            <motion.div
+              className="group/badge flex cursor-default flex-col items-center text-center"
+              whileHover={reduce ? undefined : { scale: 1.08 }}
+              transition={{ type: "spring", stiffness: 300, damping: 18 }}
+            >
+              <motion.span
+                className="text-graphite transition-colors duration-300 group-hover/badge:text-sage-deep"
+                animate={reduce ? undefined : { y: [0, -12, 0] }}
+                transition={{
+                  duration: 0.55,
+                  times: [0, 0.5, 1],
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  repeatDelay: 7,
+                  delay: i * 0.15,
+                }}
+              >
+                <Icon size={34} weight="thin" />
+              </motion.span>
+              <span className="mt-3 text-xs font-medium uppercase tracking-[0.12em] text-brown/70">
+                {label}
+              </span>
+            </motion.div>
           </Reveal>
         ))}
       </div>
@@ -539,12 +554,13 @@ function Featured() {
       {/* Mobile: carrusel de a una card (drag/swipe con snap). sm+: grilla. */}
       <div
         ref={trackRef}
-        className="mt-12 -mx-6 flex cursor-grab touch-pan-x snap-x snap-mandatory overflow-x-auto pb-1 select-none [scrollbar-width:none] sm:mx-0 sm:grid sm:cursor-auto sm:touch-auto sm:snap-none sm:select-auto sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:pb-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden"
+        className="mt-12 -mx-6 flex cursor-grab touch-pan-x snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain py-3 select-none [scrollbar-width:none] sm:mx-0 sm:grid sm:cursor-auto sm:touch-auto sm:snap-none sm:select-auto sm:grid-cols-2 sm:gap-6 sm:overflow-x-visible sm:overflow-y-visible sm:py-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden"
       >
         {featured.map((t, i) => (
           <Reveal
             key={t.slug}
             delay={(i % 3) * 0.08}
+            y={0}
             className="w-full shrink-0 snap-center px-6 sm:w-auto sm:px-0"
           >
             <TreatmentCard {...t} />
