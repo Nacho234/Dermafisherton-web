@@ -353,16 +353,36 @@ function Enfoque() {
           </Reveal>
         </div>
 
-        {/* Imagen (placeholder editable) */}
-        <Reveal y={26}>
+        {/* Imagen con contenido encima (etiqueta + título + CTA) */}
+        <Reveal y={26} className="group relative overflow-hidden rounded-3xl">
           <EditorialImage
             src="/enfoque/enfoque.webp"
             w={1000}
             h={1250}
             alt="Piel sana y natural — Dermafisherton"
             scrim={false}
-            className="aspect-[4/5] w-full"
+            rounded="rounded-none"
+            className="aspect-[4/5] w-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           />
+
+          {/* Scrim para legibilidad */}
+          <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-graphite/90 via-graphite/25 to-transparent" />
+
+          {/* Contenido sobre la imagen */}
+          <div className="absolute inset-x-0 bottom-0 p-7 sm:p-8">
+            <span className="eyebrow !text-white/80">Piel sana</span>
+            <h3 className="mt-2 max-w-xs text-2xl leading-tight text-white sm:text-3xl">
+              Resultados que se ven naturales
+            </h3>
+            <Button
+              to="/contacto"
+              variant="sage"
+              size="md"
+              className="mt-5"
+            >
+              Reservar evaluación
+            </Button>
+          </div>
         </Reveal>
       </div>
     </section>
@@ -554,7 +574,7 @@ function Featured() {
       {/* Mobile: carrusel de a una card (drag/swipe con snap). sm+: grilla. */}
       <div
         ref={trackRef}
-        className="mt-12 -mx-6 flex cursor-grab touch-pan-x snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain py-3 select-none [scrollbar-width:none] sm:mx-0 sm:grid sm:cursor-auto sm:touch-auto sm:snap-none sm:select-auto sm:grid-cols-2 sm:gap-6 sm:overflow-x-visible sm:overflow-y-visible sm:py-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden"
+        className="mt-12 -mx-6 flex cursor-grab snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain py-3 select-none [scrollbar-width:none] sm:mx-0 sm:grid sm:cursor-auto sm:snap-none sm:select-auto sm:grid-cols-2 sm:gap-6 sm:overflow-x-visible sm:overflow-y-visible sm:py-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden"
       >
         {featured.map((t, i) => (
           <Reveal
