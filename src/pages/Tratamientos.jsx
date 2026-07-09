@@ -3,6 +3,7 @@ import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import EditorialImage from "../components/EditorialImage";
 import CTASection from "../components/CTASection";
+import TreatmentClips from "../components/TreatmentClips";
 import { categories } from "../data/treatments";
 import { waLink } from "../data/site";
 
@@ -104,6 +105,9 @@ export default function Tratamientos() {
           </div>
         </section>
       ))}
+
+      {/* Tratamientos en acción — clips reales de la clínica */}
+      <TreatmentClips />
 
       {/* Page-specific note + CTA */}
       <section className="border-t border-cream">
