@@ -11,6 +11,7 @@
   "dependencies": {
     "@fontsource-variable/manrope": "^5.1.0",
     "@fontsource/cormorant-garamond": "^5.1.0",
+    "@fontsource/great-vibes": "^5.2.8",
     "@phosphor-icons/react": "^2.1.7",
     "motion": "^11.15.0",
     "react": "^18.3.1",
