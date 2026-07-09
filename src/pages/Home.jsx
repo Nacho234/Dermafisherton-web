@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
 import {
@@ -427,8 +428,64 @@ function MosaicBento() {
   );
 }
 
+/* -- Drag-to-scroll con mouse (el táctil ya arrastra nativamente) -------- */
+function useDragScroll() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let down = false;
+    let startX = 0;
+    let startLeft = 0;
+    const onDown = (e) => {
+      if (e.pointerType !== "mouse") return; // táctil = scroll nativo
+      down = true;
+      startX = e.pageX;
+      startLeft = el.scrollLeft;
+      el.classList.add("cursor-grabbing");
+    };
+    const onMove = (e) => {
+      if (!down) return;
+      e.preventDefault();
+      el.scrollLeft = startLeft - (e.pageX - startX);
+    };
+    const onUp = () => {
+      down = false;
+      el.classList.remove("cursor-grabbing");
+    };
+    el.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      el.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, []);
+  return ref;
+}
+
 /* ------------------------ Tratamientos destacados ----------------------- */
 function Featured() {
+  const trackRef = useDragScroll();
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      if (!el.clientWidth) return;
+      setActive(Math.round(el.scrollLeft / el.clientWidth));
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [trackRef]);
+
+  const goTo = (i) => {
+    const el = trackRef.current;
+    if (el) el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+  };
+
   return (
     <section className="container-page py-20 md:py-28">
       <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
@@ -452,11 +509,35 @@ function Featured() {
         </Reveal>
       </div>
 
-      <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Mobile: carrusel de a una card (drag/swipe con snap). sm+: grilla. */}
+      <div
+        ref={trackRef}
+        className="mt-12 -mx-6 flex cursor-grab touch-pan-x snap-x snap-mandatory overflow-x-auto pb-1 select-none [scrollbar-width:none] sm:mx-0 sm:grid sm:cursor-auto sm:touch-auto sm:snap-none sm:select-auto sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:pb-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden"
+      >
         {featured.map((t, i) => (
-          <Reveal key={t.slug} delay={(i % 3) * 0.08}>
+          <Reveal
+            key={t.slug}
+            delay={(i % 3) * 0.08}
+            className="w-full shrink-0 snap-center px-6 sm:w-auto sm:px-0"
+          >
             <TreatmentCard {...t} />
           </Reveal>
+        ))}
+      </div>
+
+      {/* Puntitos (solo mobile) */}
+      <div className="mt-6 flex justify-center gap-2 sm:hidden">
+        {featured.map((t, i) => (
+          <button
+            key={t.slug}
+            type="button"
+            onClick={() => goTo(i)}
+            aria-label={`Ir al tratamiento ${i + 1}`}
+            aria-current={active === i}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              active === i ? "w-6 bg-sage-deep" : "w-2 bg-brown/25"
+            }`}
+          />
         ))}
       </div>
     </section>
