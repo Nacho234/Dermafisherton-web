@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
   Stethoscope,
   HandHeart,
@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   SealCheck,
   Leaf,
+  Star,
 } from "@phosphor-icons/react";
 
 import Reveal from "../components/Reveal";
@@ -711,7 +712,29 @@ function AboutTeaser() {
 }
 
 /* ---------------------------- Testimonios ------------------------------- */
+const testimonialVariants = {
+  enter: (d) => ({ opacity: 0, x: d > 0 ? 48 : -48 }),
+  center: { opacity: 1, x: 0 },
+  exit: (d) => ({ opacity: 0, x: d > 0 ? -48 : 48 }),
+};
+
 function Testimonials() {
+  const reduce = useReducedMotion();
+  const [[index, dir], setState] = useState([0, 0]);
+  const n = testimonials.length;
+
+  const paginate = (d) => setState(([prev]) => [(prev + d + n) % n, d]);
+  const goTo = (idx) => setState(([prev]) => [idx, idx >= prev ? 1 : -1]);
+
+  // Autoplay suave (pausado si el usuario prefiere menos movimiento)
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(() => setState(([prev]) => [(prev + 1) % n, 1]), 6500);
+    return () => clearInterval(id);
+  }, [reduce, n]);
+
+  const t = testimonials[index];
+
   return (
     <section className="container-page py-20 md:py-28">
       <SectionHeader
@@ -719,12 +742,85 @@ function Testimonials() {
         align="center"
         className="mx-auto"
       />
-      <div className="mt-12 grid gap-6 md:grid-cols-3">
-        {testimonials.map((t, i) => (
-          <Reveal key={t.quote} delay={i * 0.1}>
-            <TestimonialCard {...t} />
+
+      {/* Desktop: grilla de 3 cards */}
+      <div className="mt-14 hidden gap-6 md:grid md:grid-cols-3">
+        {testimonials.map((item, idx) => (
+          <Reveal key={item.quote} delay={idx * 0.1}>
+            <figure className="flex h-full flex-col rounded-3xl border border-cream bg-warm-white p-8 shadow-soft">
+              <div className="flex gap-1 text-sage-deep">
+                {Array.from({ length: 5 }).map((_, s) => (
+                  <Star key={s} size={16} weight="fill" />
+                ))}
+              </div>
+              <blockquote className="mt-5 flex-1 font-display text-xl leading-snug text-graphite">
+                &ldquo;{item.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-6 border-t border-cream pt-5">
+                <span className="block font-semibold text-brown">{item.name}</span>
+                <span className="mt-1 block text-xs uppercase tracking-[0.14em] text-taupe">
+                  {item.detail}
+                </span>
+              </figcaption>
+            </figure>
           </Reveal>
         ))}
+      </div>
+
+      {/* Mobile: carrusel destacado (drag + puntitos) */}
+      <div className="mx-auto mt-12 max-w-xl md:hidden">
+        <div className="overflow-hidden px-2">
+          <AnimatePresence custom={dir} mode="wait" initial={false}>
+            <motion.figure
+              key={index}
+              custom={dir}
+              variants={reduce ? undefined : testimonialVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              drag={reduce ? false : "x"}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.18}
+              onDragEnd={(e, info) => {
+                if (info.offset.x < -60) paginate(1);
+                else if (info.offset.x > 60) paginate(-1);
+              }}
+              className="flex cursor-grab flex-col items-center text-center active:cursor-grabbing"
+            >
+              <div className="flex gap-1 text-sage-deep">
+                {Array.from({ length: 5 }).map((_, s) => (
+                  <Star key={s} size={18} weight="fill" />
+                ))}
+              </div>
+              <blockquote className="mt-7 max-w-2xl font-display text-2xl leading-snug text-graphite sm:text-3xl md:text-[2.1rem]">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-8">
+                <span className="block font-semibold text-brown">{t.name}</span>
+                <span className="mt-1 block text-xs uppercase tracking-[0.14em] text-taupe">
+                  {t.detail}
+                </span>
+              </figcaption>
+            </motion.figure>
+          </AnimatePresence>
+        </div>
+
+        {/* Puntitos */}
+        <div className="mt-10 flex justify-center gap-2">
+          {testimonials.map((item, idx) => (
+            <button
+              key={item.quote}
+              type="button"
+              onClick={() => goTo(idx)}
+              aria-label={`Testimonio ${idx + 1}`}
+              aria-current={index === idx}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === idx ? "w-6 bg-sage-deep" : "w-2 bg-brown/25"
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -798,9 +894,6 @@ export default function Home() {
       <Enfoque />
       <MosaicBento />
       <Featured />
-      <Approach />
-      <Process />
-      <AboutTeaser />
       <Testimonials />
       <CTASection />
       <LocationTeaser />
