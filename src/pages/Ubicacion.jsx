@@ -1,10 +1,3 @@
-import { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-} from "motion/react";
 import {
   MapPinLine,
   Clock,
@@ -16,72 +9,52 @@ import Reveal from "../components/Reveal";
 import Button from "../components/Button";
 import { MapPanel } from "./Home";
 import { site, waLink } from "../data/site";
-import sucursal from "../assets/sucursal.webp";
 import sedeExterior from "../assets/sede-exterior.webp";
 import reelUbicacion from "../assets/reel-ubicacion.mp4";
 import reelUbicacionPoster from "../assets/reel-ubicacion-poster.webp";
 
 const REEL_URL = "https://www.instagram.com/reel/DYmoODlgpqs/";
 
-// Card del reel de la sede: reproduce muteado y el clic abre Instagram.
-function ReelCard({ className = "" }) {
-  return (
-    <a
-      href={REEL_URL}
-      target="_blank"
-      rel="noreferrer"
-      aria-label="Ver el reel de la nueva sede en Instagram"
-      className={`group relative block overflow-hidden rounded-3xl border border-warm-white/25 shadow-lift transition-transform duration-500 ease-out hover:scale-[1.02] ${className}`}
-    >
-      <video
-        src={reelUbicacion}
-        poster={reelUbicacionPoster}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="metadata"
-        aria-hidden="true"
-        className="pointer-events-none h-full w-full object-cover"
-      />
-      <span className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-graphite/60 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm transition-colors duration-300 group-hover:bg-graphite/80">
-        <InstagramLogo size={15} weight="fill" /> Ver en Instagram
-      </span>
-    </a>
-  );
-}
-
 export default function Ubicacion() {
-  // Parallax: la foto de la sede se mueve más lento que el scroll.
-  const heroRef = useRef(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
-
   return (
     <>
-      {/* Hero a lo ancho completo con parallax: foto de la sede + texto adelante */}
+      {/* Hero a lo ancho completo: el reel de la nueva sede como fondo,
+          texto adelante y clic en el video que abre Instagram */}
       <section className="relative bg-warm-white pt-16 md:pt-20">
-        <div
-          ref={heroRef}
-          className="relative h-[58vh] min-h-[380px] w-full overflow-hidden md:h-[78vh]"
-        >
-          <motion.img
-            src={sucursal}
-            alt="Sede de Dermafisherton en Schweitzer 8883, Fisherton"
-            style={reduce ? undefined : { y }}
-            className="absolute inset-x-0 top-[-8%] h-[116%] w-full object-cover object-center"
+        <div className="group relative h-[58vh] min-h-[380px] w-full overflow-hidden md:h-[78vh]">
+          <video
+            src={reelUbicacion}
+            poster={reelUbicacionPoster}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover [object-position:50%_72%]"
           />
-          {/* velado para que el texto se lea sobre la imagen */}
+          {/* velado para que el texto se lea sobre el video */}
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-r from-brown/90 via-brown/55 to-brown/10"
+            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-brown/90 via-brown/50 to-brown/10"
           />
-          <div className="absolute inset-0 flex items-center">
-            <div className="container-page flex w-full items-center justify-between gap-10">
+
+          {/* Toda el área del video abre el reel en Instagram */}
+          <a
+            href={REEL_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Ver el reel de la nueva sede en Instagram"
+            className="absolute inset-0 z-10 block"
+          >
+            <span className="absolute bottom-5 right-5 flex items-center gap-1.5 whitespace-nowrap rounded-full bg-graphite/60 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur-sm transition-colors duration-300 group-hover:bg-graphite/85 md:bottom-7 md:right-8">
+              <InstagramLogo size={15} weight="fill" /> Ver en Instagram
+            </span>
+          </a>
+
+          {/* Texto del hero (solo visual, el clic pasa al video) */}
+          <div className="pointer-events-none absolute inset-0 z-20 flex items-center">
+            <div className="container-page">
               <div className="max-w-xl text-warm-white">
                 <span className="text-xs font-semibold uppercase tracking-[0.22em] text-warm-white/80">
                   Ubicación
@@ -94,17 +67,9 @@ export default function Ubicacion() {
                   atención profesional.
                 </p>
               </div>
-
-              {/* Reel de la nueva sede (desktop): clic abre Instagram */}
-              <ReelCard className="hidden aspect-[9/16] h-[80%] max-h-[560px] shrink-0 md:block" />
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Reel de la nueva sede (mobile, bajo el hero) */}
-      <section className="container-page pt-10 md:hidden">
-        <ReelCard className="mx-auto aspect-[9/16] w-56" />
       </section>
 
       <section className="container-page py-16 md:py-24">
