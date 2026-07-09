@@ -1,16 +1,15 @@
-import { WhatsappLogo } from "@phosphor-icons/react";
 import Reveal from "./Reveal";
-import Button from "./Button";
-import { waLink } from "../data/site";
 import ctaVideo from "../assets/cta-bg.mp4";
 import ctaPoster from "../assets/cta-bg-poster.webp";
 
-// Reusable closing CTA. Single WhatsApp intent ("Consultar por WhatsApp").
-// Fondo: video de la clínica difuminado + velado oscuro para legibilidad.
+// Banda de cierre reutilizable, con video de la clínica de fondo.
+// Sin botón propio: la conversión queda en el flotante de WhatsApp.
+// `message` se sigue aceptando por compatibilidad con las páginas que lo pasan.
 export default function CTASection({
   title = "Empezá con una evaluación personalizada",
   text = "Contanos qué querés mejorar y te orientamos sobre el tratamiento más adecuado para tu piel.",
-  message = "Hola, quisiera empezar con una evaluación personalizada.",
+  // eslint-disable-next-line no-unused-vars
+  message,
 }) {
   return (
     <section className="container-page py-20 md:py-28">
@@ -26,7 +25,7 @@ export default function CTASection({
           playsInline
           aria-hidden="true"
         />
-        {/* Velado cálido para que el texto y el botón se lean */}
+        {/* Velado cálido para que el texto se lea */}
         <div aria-hidden className="absolute inset-0 bg-brown/45" />
         {/* soft sage glow, tinted not neon */}
         <div
@@ -40,18 +39,6 @@ export default function CTASection({
           <p className="mx-auto mt-5 max-w-xl text-[1.05rem] leading-relaxed text-warm-white/70">
             {text}
           </p>
-          <div className="mt-9 flex justify-center">
-            <Button
-              href={waLink(message)}
-              target="_blank"
-              rel="noreferrer"
-              variant="sage"
-              size="lg"
-            >
-              <WhatsappLogo size={20} weight="fill" />
-              Consultar por WhatsApp
-            </Button>
-          </div>
         </div>
       </Reveal>
     </section>
