@@ -18,10 +18,48 @@ const REEL_URL = "https://www.instagram.com/reel/DYmoODlgpqs/";
 export default function Ubicacion() {
   return (
     <>
-      {/* Hero a lo ancho completo: el reel entero y bien encuadrado sobre un
-          fondo difuminado del mismo video. Clic en el hero abre Instagram. */}
-      <section className="relative bg-warm-white pt-16 md:pt-20">
-        <div className="group relative h-[62vh] min-h-[420px] w-full overflow-hidden md:h-[80vh]">
+      {/* Hero con el reel de la nueva sede. Mobile: texto arriba y video full
+          width. Desktop: fondo difuminado, texto a la izquierda y card ancha
+          a la derecha. El clic en el video abre Instagram. */}
+      <section className="relative bg-warm-white pt-24 md:pt-20">
+        {/* ---- Mobile ---- */}
+        <div className="md:hidden">
+          <div className="container-page pb-8">
+            <span className="eyebrow">Ubicación</span>
+            <h1 className="mt-4 text-[2.2rem] leading-[1.05]">
+              Estamos en Fisherton
+            </h1>
+            <p className="mt-4 max-w-md text-base leading-relaxed text-brown/75">
+              Un espacio cómodo, privado y accesible para cuidar tu piel con
+              atención profesional.
+            </p>
+          </div>
+          <a
+            href={REEL_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Ver el reel de la nueva sede en Instagram"
+            className="group relative block w-full"
+          >
+            <video
+              src={reelUbicacion}
+              poster={reelUbicacionPoster}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+              className="aspect-[9/16] w-full object-cover"
+            />
+            <span className="absolute bottom-4 right-4 flex items-center gap-1.5 whitespace-nowrap rounded-full bg-graphite/60 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur-sm">
+              <InstagramLogo size={15} weight="fill" /> Ver en Instagram
+            </span>
+          </a>
+        </div>
+
+        {/* ---- Desktop ---- */}
+        <div className="group relative hidden h-[80vh] w-full overflow-hidden md:block">
           {/* Fondo: el mismo video difuminado llenando todo el ancho */}
           <video
             src={reelUbicacion}
@@ -34,31 +72,29 @@ export default function Ubicacion() {
             aria-hidden="true"
             className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-[0.5]"
           />
-          {/* Reel completo, sin recortar: centrado en mobile, a la derecha en desktop */}
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center py-6 md:justify-end md:pr-[7%] md:py-8">
-            <video
-              src={reelUbicacion}
-              poster={reelUbicacionPoster}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              aria-hidden="true"
-              className="h-full rounded-2xl object-contain shadow-lift"
-            />
+          {/* Card del reel, más ancha (recorte suave arriba/abajo) */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-end py-8 pr-[6%]">
+            <div className="aspect-[3/4] h-full">
+              <video
+                src={reelUbicacion}
+                poster={reelUbicacionPoster}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                aria-hidden="true"
+                className="h-full w-full rounded-2xl object-cover shadow-lift"
+              />
+            </div>
           </div>
-          {/* velados para legibilidad: lateral en desktop, inferior en mobile */}
+          {/* velado izquierdo para el texto */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-brown/80 via-brown/25 to-transparent md:block"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-graphite/85 via-transparent to-transparent md:hidden"
+            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-brown/80 via-brown/25 to-transparent"
           />
 
-          {/* Toda el área del video abre el reel en Instagram */}
+          {/* Toda el área abre el reel en Instagram */}
           <a
             href={REEL_URL}
             target="_blank"
@@ -66,22 +102,22 @@ export default function Ubicacion() {
             aria-label="Ver el reel de la nueva sede en Instagram"
             className="absolute inset-0 z-10 block"
           >
-            <span className="absolute bottom-5 right-5 flex items-center gap-1.5 whitespace-nowrap rounded-full bg-graphite/60 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur-sm transition-colors duration-300 group-hover:bg-graphite/85 md:bottom-7 md:right-8">
+            <span className="absolute bottom-7 right-8 flex items-center gap-1.5 whitespace-nowrap rounded-full bg-graphite/60 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur-sm transition-colors duration-300 group-hover:bg-graphite/85">
               <InstagramLogo size={15} weight="fill" /> Ver en Instagram
             </span>
           </a>
 
           {/* Texto del hero (solo visual, el clic pasa al video) */}
-          <div className="pointer-events-none absolute inset-0 z-20 flex items-end pb-12 md:items-center md:pb-0">
+          <div className="pointer-events-none absolute inset-0 z-20 flex items-center">
             <div className="container-page">
               <div className="max-w-xl text-warm-white">
                 <span className="text-xs font-semibold uppercase tracking-[0.22em] text-warm-white/80">
                   Ubicación
                 </span>
-                <h1 className="mt-4 text-[2.2rem] leading-[1.05] text-warm-white drop-shadow-sm sm:text-5xl md:text-[3.4rem]">
+                <p className="mt-4 text-[3.4rem] font-display leading-[1.05] text-warm-white drop-shadow-sm">
                   Estamos en Fisherton
-                </h1>
-                <p className="mt-5 max-w-md text-base leading-relaxed text-warm-white/90 sm:text-lg">
+                </p>
+                <p className="mt-5 max-w-md text-lg leading-relaxed text-warm-white/90">
                   Un espacio cómodo, privado y accesible para cuidar tu piel con
                   atención profesional.
                 </p>
