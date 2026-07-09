@@ -2,7 +2,17 @@ import Reveal from "./Reveal";
 import EditorialImage from "./EditorialImage";
 
 // Shared hero for interior pages. Asymmetric split, calm and airy.
-export default function PageHero({ eyebrow, title, subtitle, seed, imageAlt }) {
+export default function PageHero({
+  eyebrow,
+  title,
+  subtitle,
+  seed,
+  src,
+  imageAlt,
+  scrim = true,
+  imgClassName = "aspect-[5/4] w-full",
+  objectPosition = "center",
+}) {
   return (
     <section className="relative overflow-hidden bg-warm-white pt-28 md:pt-32">
       <div className="container-page grid items-center gap-10 pb-16 md:grid-cols-12 md:gap-14 md:pb-24">
@@ -29,12 +39,15 @@ export default function PageHero({ eyebrow, title, subtitle, seed, imageAlt }) {
         <div className="md:col-span-6 lg:col-span-6">
           <Reveal delay={0.1} y={28}>
             <EditorialImage
+              src={src}
               seed={seed}
               w={1000}
               h={800}
               alt={imageAlt}
               priority
-              className="aspect-[5/4] w-full"
+              scrim={scrim}
+              objectPosition={objectPosition}
+              className={imgClassName}
             />
           </Reveal>
         </div>

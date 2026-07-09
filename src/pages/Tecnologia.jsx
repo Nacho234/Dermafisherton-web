@@ -35,8 +35,10 @@ export default function Tecnologia() {
         eyebrow="Tecnología"
         title="Tecnología estética al servicio de tu piel"
         subtitle="Combinamos evaluación profesional, protocolos actualizados y equipamiento adecuado para ofrecer tratamientos seguros y personalizados."
-        seed="aesthetic-technology-soft"
-        imageAlt="Equipamiento estético de Dermafisherton"
+        src="/tecnologia/profesional.png"
+        scrim={false}
+        imgClassName="aspect-[4/5] w-full"
+        imageAlt="Profesional de Dermafisherton"
       />
 
       {/* 4 principle blocks — bento with rhythm */}
@@ -64,23 +66,24 @@ export default function Tecnologia() {
       </section>
 
       {/* Editorial band with editable placeholders */}
-      <section className="bg-brown text-warm-white">
+      <section className="bg-warm-white">
         <div className="container-page grid items-center gap-12 py-20 md:grid-cols-12 md:gap-16 md:py-28">
           <Reveal className="md:col-span-6" y={26}>
             <EditorialImage
-              seed="clinic-device-detail"
-              w={1000}
-              h={900}
-              alt="Detalle de aparatología en Dermafisherton"
+              src="/tecnologia/maquinas.png"
+              w={1535}
+              h={1024}
+              alt="Aparatología estética de Dermafisherton"
               grayscale={false}
-              className="aspect-[10/9] w-full"
+              scrim={false}
+              className="aspect-[3/2] w-full"
             />
           </Reveal>
           <div className="md:col-span-6">
-            <h2 className="text-3xl leading-tight text-warm-white sm:text-4xl">
+            <h2 className="text-3xl leading-tight text-graphite sm:text-4xl">
               Equipamiento y protocolos
             </h2>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-warm-white/75">
+            <p className="mt-6 max-w-lg text-lg leading-relaxed text-brown/75">
               La aparatología específica y los protocolos utilizados se definen
               según cada tratamiento y evaluación. Completá esta sección con la
               información real de la clínica.
@@ -90,9 +93,9 @@ export default function Tecnologia() {
                 (item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-3 border-b border-warm-white/15 pb-4 text-warm-white/80"
+                    className="flex items-center gap-3 border-b border-cream pb-4 text-brown/80"
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-sage" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-sage-deep" />
                     {item}
                   </li>
                 )
