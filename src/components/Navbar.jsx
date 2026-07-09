@@ -138,26 +138,21 @@ export default function Navbar() {
                     </button>
                   )}
 
-                  {/* Desplegable en hover */}
-                  {l.menu && (
-                    <AnimatePresence>
-                      {openMenu === l.label && (
-                        <motion.div
-                          key={`menu-${l.label}`}
-                          initial={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                          className="absolute left-1/2 top-full -translate-x-1/2 pt-4"
-                        >
-                          <DropdownPanel
-                            items={l.menu}
-                            cols={l.cols}
-                            onNavigate={() => setOpenMenu(null)}
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                  {/* Desplegable en hover (montaje condicional: al cerrar se
+                      desmonta al instante, sin dejar nodos que tapen clicks) */}
+                  {l.menu && openMenu === l.label && (
+                    <motion.div
+                      initial={reduce ? false : { opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                      className="absolute left-1/2 top-full -translate-x-1/2 pt-4"
+                    >
+                      <DropdownPanel
+                        items={l.menu}
+                        cols={l.cols}
+                        onNavigate={() => setOpenMenu(null)}
+                      />
+                    </motion.div>
                   )}
                 </li>
               );
@@ -217,31 +212,64 @@ export default function Navbar() {
                 ))}
             </ul>
 
-            {/* Listas de tratamientos y servicios (mobile) */}
+            {/* Listas de tratamientos y servicios (mobile): cerradas por
+                defecto, se despliegan con un toque en cada sección. */}
             <div className="container-page pb-2">
               {[
                 { label: "Tratamientos", items: tratamientosMenu },
                 { label: "Servicios", items: serviciosMenu },
               ].map((g) => (
                 <div key={g.label}>
-                  <p className="px-4 pb-1 pt-3 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-taupe">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenMenu(openMenu === g.label ? null : g.label)
+                    }
+                    aria-expanded={openMenu === g.label}
+                    className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-lg transition-colors ${
+                      openMenu === g.label
+                        ? "bg-sage/15 text-sage-deep"
+                        : "text-graphite hover:bg-black/[0.03]"
+                    }`}
+                  >
                     {g.label}
-                  </p>
-                  <ul className="grid grid-cols-2">
-                    {g.items.map((name) => (
-                      <li key={name}>
-                        <a
-                          href={waLink(`Hola, quisiera consultar por ${name}.`)}
-                          target="_blank"
-                          rel="noreferrer"
-                          onClick={() => setOpen(false)}
-                          className="block rounded-lg px-4 py-2 text-[0.95rem] text-brown/80 transition-colors hover:bg-black/[0.03]"
-                        >
-                          {name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+                    <CaretDown
+                      size={16}
+                      weight="bold"
+                      className={`transition-transform duration-300 ${
+                        openMenu === g.label ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  {/* Colapso por CSS (grid-rows): apertura y cierre suaves sin
+                      desmontar, y sin capturar toques cuando está cerrado. */}
+                  <div
+                    aria-hidden={openMenu !== g.label}
+                    className={`grid transition-all duration-300 ease-out ${
+                      openMenu === g.label
+                        ? "grid-rows-[1fr] opacity-100"
+                        : "pointer-events-none grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <ul className="grid grid-cols-2 pb-2">
+                        {g.items.map((name) => (
+                          <li key={name}>
+                            <a
+                              href={waLink(`Hola, quisiera consultar por ${name}.`)}
+                              target="_blank"
+                              rel="noreferrer"
+                              tabIndex={openMenu === g.label ? 0 : -1}
+                              onClick={() => setOpen(false)}
+                              className="block rounded-lg px-4 py-2 text-[0.95rem] text-brown/80 transition-colors hover:bg-black/[0.03]"
+                            >
+                              {name}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
