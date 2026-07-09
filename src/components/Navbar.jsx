@@ -1,18 +1,46 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { List, X } from "@phosphor-icons/react";
+import { CaretDown, List, X } from "@phosphor-icons/react";
 import Button from "./Button";
+import { tratamientosMenu, serviciosMenu } from "../data/menu";
+import { waLink } from "../data/site";
 
+// Ítems con `menu` despliegan una lista al pasar el cursor (desktop).
 const links = [
   { to: "/", label: "Inicio", end: true },
   { to: "/nosotros", label: "Nosotros" },
-  { to: "/tratamientos", label: "Tratamientos" },
+  { to: "/tratamientos", label: "Tratamientos", menu: tratamientosMenu, cols: 2 },
+  { label: "Servicios", menu: serviciosMenu, cols: 1 },
   { to: "/tecnologia", label: "Tecnología" },
   { to: "/experiencia", label: "Experiencia" },
   { to: "/ubicacion", label: "Ubicación" },
   { to: "/contacto", label: "Contacto" },
 ];
+
+// Panel desplegable del navbar (desktop).
+function DropdownPanel({ items, cols, onNavigate }) {
+  return (
+    <div
+      className={`rounded-2xl border border-graphite/10 bg-warm-white p-2.5 shadow-lift ${
+        cols === 2 ? "grid w-[26rem] grid-cols-2 gap-x-1" : "w-56"
+      }`}
+    >
+      {items.map((name) => (
+        <a
+          key={name}
+          href={waLink(`Hola, quisiera consultar por ${name}.`)}
+          target="_blank"
+          rel="noreferrer"
+          onClick={onNavigate}
+          className="block rounded-lg px-3.5 py-2 text-[0.9rem] text-brown/75 transition-colors hover:bg-sage/10 hover:text-brown"
+        >
+          {name}
+        </a>
+      ))}
+    </div>
+  );
+}
 
 function Wordmark({ onClick }) {
   return (
@@ -30,6 +58,7 @@ function Wordmark({ onClick }) {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(null); // label del desplegable activo
   const reduce = useReducedMotion();
 
   useEffect(() => {
@@ -61,23 +90,78 @@ export default function Navbar() {
 
           {/* Desktop links — one line, ≤80px tall */}
           <ul className="hidden items-center gap-7 lg:flex">
-            {links.map((l) => (
-              <li key={l.to}>
-                <NavLink
-                  to={l.to}
-                  end={l.end}
-                  className={({ isActive }) =>
-                    `relative text-[0.95rem] transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-sage-deep after:transition-all after:duration-300 ${
-                      isActive
-                        ? "text-brown after:w-full"
-                        : "text-brown/65 hover:text-brown after:w-0 hover:after:w-full"
-                    }`
-                  }
+            {links.map((l) => {
+              const linkCls = ({ isActive }) =>
+                `relative inline-flex items-center gap-1 text-[0.95rem] transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-sage-deep after:transition-all after:duration-300 ${
+                  isActive
+                    ? "text-brown after:w-full"
+                    : "text-brown/65 hover:text-brown after:w-0 hover:after:w-full"
+                }`;
+              const caret = l.menu && (
+                <CaretDown
+                  size={12}
+                  weight="bold"
+                  className={`transition-transform duration-300 ${
+                    openMenu === l.label ? "rotate-180" : ""
+                  }`}
+                />
+              );
+              return (
+                <li
+                  key={l.label}
+                  className="relative"
+                  onMouseEnter={l.menu ? () => setOpenMenu(l.label) : undefined}
+                  onMouseLeave={l.menu ? () => setOpenMenu(null) : undefined}
                 >
-                  {l.label}
-                </NavLink>
-              </li>
-            ))}
+                  {l.to ? (
+                    <NavLink
+                      to={l.to}
+                      end={l.end}
+                      aria-haspopup={l.menu ? "menu" : undefined}
+                      aria-expanded={l.menu ? openMenu === l.label : undefined}
+                      onFocus={l.menu ? () => setOpenMenu(l.label) : undefined}
+                      className={linkCls}
+                    >
+                      {l.label}
+                      {caret}
+                    </NavLink>
+                  ) : (
+                    <button
+                      type="button"
+                      aria-haspopup="menu"
+                      aria-expanded={openMenu === l.label}
+                      onFocus={() => setOpenMenu(l.label)}
+                      className={linkCls({ isActive: false })}
+                    >
+                      {l.label}
+                      {caret}
+                    </button>
+                  )}
+
+                  {/* Desplegable en hover */}
+                  {l.menu && (
+                    <AnimatePresence>
+                      {openMenu === l.label && (
+                        <motion.div
+                          key={`menu-${l.label}`}
+                          initial={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                          className="absolute left-1/2 top-full -translate-x-1/2 pt-4"
+                        >
+                          <DropdownPanel
+                            items={l.menu}
+                            cols={l.cols}
+                            onNavigate={() => setOpenMenu(null)}
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  )}
+                </li>
+              );
+            })}
           </ul>
 
           <div className="hidden lg:block">
@@ -111,25 +195,56 @@ export default function Navbar() {
             className="w-full overflow-hidden border-b border-graphite/10 bg-warm-white/98 shadow-soft backdrop-blur-xl lg:hidden"
           >
             <ul className="container-page flex flex-col py-3">
-              {links.map((l) => (
-                <li key={l.to}>
-                  <NavLink
-                    to={l.to}
-                    end={l.end}
-                    onClick={() => setOpen(false)}
-                    className={({ isActive }) =>
-                      `block rounded-xl px-4 py-3 text-lg transition-colors ${
-                        isActive
-                          ? "bg-sage/15 text-sage-deep"
-                          : "text-graphite hover:bg-black/[0.03]"
-                      }`
-                    }
-                  >
-                    {l.label}
-                  </NavLink>
-                </li>
-              ))}
+              {links
+                .filter((l) => l.to)
+                .map((l) => (
+                  <li key={l.to}>
+                    <NavLink
+                      to={l.to}
+                      end={l.end}
+                      onClick={() => setOpen(false)}
+                      className={({ isActive }) =>
+                        `block rounded-xl px-4 py-3 text-lg transition-colors ${
+                          isActive
+                            ? "bg-sage/15 text-sage-deep"
+                            : "text-graphite hover:bg-black/[0.03]"
+                        }`
+                      }
+                    >
+                      {l.label}
+                    </NavLink>
+                  </li>
+                ))}
             </ul>
+
+            {/* Listas de tratamientos y servicios (mobile) */}
+            <div className="container-page pb-2">
+              {[
+                { label: "Tratamientos", items: tratamientosMenu },
+                { label: "Servicios", items: serviciosMenu },
+              ].map((g) => (
+                <div key={g.label}>
+                  <p className="px-4 pb-1 pt-3 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-taupe">
+                    {g.label}
+                  </p>
+                  <ul className="grid grid-cols-2">
+                    {g.items.map((name) => (
+                      <li key={name}>
+                        <a
+                          href={waLink(`Hola, quisiera consultar por ${name}.`)}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={() => setOpen(false)}
+                          className="block rounded-lg px-4 py-2 text-[0.95rem] text-brown/80 transition-colors hover:bg-black/[0.03]"
+                        >
+                          {name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
             <div className="container-page pb-4">
               <Button
                 to="/contacto"
