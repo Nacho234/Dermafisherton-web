@@ -18,10 +18,11 @@ const REEL_URL = "https://www.instagram.com/reel/DYmoODlgpqs/";
 export default function Ubicacion() {
   return (
     <>
-      {/* Hero a lo ancho completo: el reel de la nueva sede como fondo,
-          texto adelante y clic en el video que abre Instagram */}
+      {/* Hero a lo ancho completo: el reel entero y bien encuadrado sobre un
+          fondo difuminado del mismo video. Clic en el hero abre Instagram. */}
       <section className="relative bg-warm-white pt-16 md:pt-20">
-        <div className="group relative h-[58vh] min-h-[380px] w-full overflow-hidden md:h-[78vh]">
+        <div className="group relative h-[62vh] min-h-[420px] w-full overflow-hidden md:h-[80vh]">
+          {/* Fondo: el mismo video difuminado llenando todo el ancho */}
           <video
             src={reelUbicacion}
             poster={reelUbicacionPoster}
@@ -31,12 +32,30 @@ export default function Ubicacion() {
             playsInline
             preload="metadata"
             aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover [object-position:50%_72%]"
+            className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-[0.5]"
           />
-          {/* velado para que el texto se lea sobre el video */}
+          {/* Reel completo, sin recortar: centrado en mobile, a la derecha en desktop */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center py-6 md:justify-end md:pr-[7%] md:py-8">
+            <video
+              src={reelUbicacion}
+              poster={reelUbicacionPoster}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+              className="h-full rounded-2xl object-contain shadow-lift"
+            />
+          </div>
+          {/* velados para legibilidad: lateral en desktop, inferior en mobile */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-brown/90 via-brown/50 to-brown/10"
+            className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-brown/80 via-brown/25 to-transparent md:block"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-graphite/85 via-transparent to-transparent md:hidden"
           />
 
           {/* Toda el área del video abre el reel en Instagram */}
@@ -53,7 +72,7 @@ export default function Ubicacion() {
           </a>
 
           {/* Texto del hero (solo visual, el clic pasa al video) */}
-          <div className="pointer-events-none absolute inset-0 z-20 flex items-center">
+          <div className="pointer-events-none absolute inset-0 z-20 flex items-end pb-12 md:items-center md:pb-0">
             <div className="container-page">
               <div className="max-w-xl text-warm-white">
                 <span className="text-xs font-semibold uppercase tracking-[0.22em] text-warm-white/80">
