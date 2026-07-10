@@ -44,7 +44,7 @@ export const team = [
     name: "Dra. Lucía Trossero",
     role: "Medicina estética",
     photo: lucia,
-    focus: { zoom: 185, pos: "48% 6%" },
+    focus: { zoom: 132, pos: "48% 16%" },
     bio: "Medicina estética, nutrición y medicina ortomolecular.",
     bioLong:
       "Ciencia aplicada a tu piel: medicina estética, nutrición y medicina ortomolecular. Docente, con doctorado en Ciencias Biológicas.",
@@ -59,7 +59,7 @@ export const team = [
     name: "Patricia Suarez",
     role: "Bioquímica · Medicina regenerativa",
     photo: patricia,
-    focus: { zoom: 180, pos: "48% 10%" },
+    focus: { zoom: 130, pos: "48% 18%" },
     bio: "Especialista en plasma rico en plaquetas y regeneración cutánea.",
     bioLong:
       "Especialista en plasma rico en plaquetas y regeneración cutánea basada en evidencia. Miembro del Comité de Bioquímica Regenerativa.",
@@ -74,7 +74,7 @@ export const team = [
     name: "Dra. Marina Berniche",
     role: "Oftalmología",
     photo: marina,
-    focus: { zoom: 195, pos: "47% 6%" },
+    focus: { zoom: 135, pos: "47% 16%" },
     bio: "Médica oftalmóloga dedicada al cuidado de la salud visual.",
     bioLong:
       "Médica oftalmóloga dedicada al cuidado de la salud visual, con más de 20 años de experiencia.",

@@ -19,18 +19,19 @@ import EditorialImage from "../components/EditorialImage";
 import SectionHeader from "../components/SectionHeader";
 import CTASection from "../components/CTASection";
 
-// Íconos flotantes alrededor de la profesional del hero.
+// Íconos flotantes alrededor de la profesional del hero, dispuestos en
+// guirnalda: un arco ovalado que la rodea, abierto abajo para no taparla.
 const floatingIcons = [
-  { icon: Sparkle, pos: "left-[3%] top-[5%]", size: "h-14 w-14", d: 0 },
-  { icon: Drop, pos: "left-[1%] top-[25%]", size: "h-12 w-12", d: 0.9 },
-  { icon: ShieldCheck, pos: "left-[2%] top-[46%]", size: "h-14 w-14", d: 1.7 },
-  { icon: Leaf, pos: "left-[3%] top-[66%]", size: "h-12 w-12", d: 0.5 },
-  { icon: FirstAid, pos: "left-[6%] top-[84%]", size: "h-14 w-14", d: 1.3 },
-  { icon: UserFocus, pos: "right-[3%] top-[6%]", size: "h-14 w-14", d: 0.7 },
-  { icon: Heart, pos: "right-[1%] top-[26%]", size: "h-12 w-12", d: 1.5 },
-  { icon: CheckCircle, pos: "right-[2%] top-[46%]", size: "h-14 w-14", d: 0.2 },
-  { icon: FlowerLotus, pos: "right-[3%] top-[65%]", size: "h-12 w-12", d: 1.1 },
-  { icon: HandHeart, pos: "right-[5%] top-[83%]", size: "h-14 w-14", d: 1.9 },
+  { icon: FirstAid, pos: "left-[13%] top-[70%]", size: "h-14 w-14", d: 1.3 },
+  { icon: Leaf, pos: "left-[4%] top-[52%]", size: "h-12 w-12", d: 0.5 },
+  { icon: ShieldCheck, pos: "left-[4%] top-[31%]", size: "h-14 w-14", d: 1.7 },
+  { icon: Drop, pos: "left-[13%] top-[13%]", size: "h-12 w-12", d: 0.9 },
+  { icon: Sparkle, pos: "left-[31%] top-[3%]", size: "h-14 w-14", d: 0 },
+  { icon: UserFocus, pos: "left-[56%] top-[3%]", size: "h-14 w-14", d: 0.7 },
+  { icon: Heart, pos: "right-[13%] top-[13%]", size: "h-12 w-12", d: 1.5 },
+  { icon: CheckCircle, pos: "right-[4%] top-[31%]", size: "h-14 w-14", d: 0.2 },
+  { icon: FlowerLotus, pos: "right-[4%] top-[52%]", size: "h-12 w-12", d: 1.1 },
+  { icon: HandHeart, pos: "right-[13%] top-[70%]", size: "h-14 w-14", d: 1.9 },
 ];
 
 function FloatingIcons() {

@@ -76,6 +76,15 @@ export default function Navbar() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
+  // Con el menú mobile abierto, bloquea el scroll de la página de fondo
+  // (el scroll pasa a ser interno del panel).
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <nav
@@ -187,7 +196,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full overflow-hidden border-b border-graphite/10 bg-warm-white/98 shadow-soft backdrop-blur-xl lg:hidden"
+            className="w-full max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-b border-graphite/10 bg-warm-white/98 shadow-soft backdrop-blur-xl lg:hidden"
           >
             <ul className="container-page flex flex-col py-3">
               {links
