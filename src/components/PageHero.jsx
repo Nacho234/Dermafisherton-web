@@ -17,11 +17,15 @@ export default function PageHero({
   videoPoster,
   // Opcional: elementos superpuestos sobre la imagen (p. ej. íconos flotantes)
   imageOverlay,
+  // Opcional: ajustar el reparto de columnas (por defecto 6/6). Permite dar
+  // más protagonismo a la imagen/video en una página concreta.
+  textSpan = "md:col-span-6 lg:col-span-6",
+  mediaSpan = "md:col-span-6 lg:col-span-6",
 }) {
   return (
     <section className="relative overflow-hidden bg-warm-white pt-28 md:pt-32">
       <div className="container-page grid items-center gap-10 pb-16 md:grid-cols-12 md:gap-14 md:pb-24">
-        <div className="md:col-span-6 lg:col-span-6">
+        <div className={textSpan}>
           {eyebrow && (
             <Reveal>
               <span className="eyebrow">{eyebrow}</span>
@@ -41,7 +45,7 @@ export default function PageHero({
           )}
         </div>
 
-        <div className="md:col-span-6 lg:col-span-6">
+        <div className={mediaSpan}>
           <Reveal delay={0.1} y={28} className="relative">
             {video ? (
               <video
