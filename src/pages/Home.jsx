@@ -363,14 +363,16 @@ function Enfoque() {
 
         {/* Imagen con contenido encima (etiqueta + título + CTA) */}
         <Reveal y={26} className="group relative overflow-hidden rounded-3xl">
-          <EditorialImage
-            src="/enfoque/enfoque.webp"
-            w={1000}
-            h={1250}
-            alt="Piel sana y natural — Dermafisherton"
-            scrim={false}
-            rounded="rounded-none"
-            className="aspect-[4/5] w-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          <video
+            src="/enfoque/enfoque.mp4"
+            poster="/enfoque/enfoque.webp"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            aria-label="Piel sana y natural — Dermafisherton"
+            className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           />
 
           {/* Scrim para legibilidad */}
