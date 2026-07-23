@@ -39,10 +39,14 @@ export default function Nosotros() {
         eyebrow="Nosotros"
         title="Cuidado dermatológico con una mirada personalizada"
         subtitle="En Dermafisherton acompañamos a cada paciente con tratamientos indicados según su piel, sus objetivos y una evaluación profesional."
+        video="/nosotros/consulta.mp4"
+        videoPoster="/nosotros/consulta.png"
         src="/nosotros/consulta.png"
         scrim={false}
         imgClassName="aspect-[3/2] w-full"
         imageAlt="Consulta profesional en Dermafisherton, Fisherton"
+        textSpan="md:col-span-5 lg:col-span-5"
+        mediaSpan="md:col-span-7 lg:col-span-7"
       />
 
       {/* Historia / concepto — editorial split */}
