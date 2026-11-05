@@ -16,13 +16,13 @@ export const beforeAfter = {
   "estetica-facial": [
     {
       label: "Labios",
-      alt: "Hidratación de labios — antes y después",
+      alt: "Hidratación de labios · antes y después",
       before: labiosAntes,
       after: labiosDespues,
     },
     {
       label: "Toxina botulínica",
-      alt: "Toxina botulínica en frente — antes y después",
+      alt: "Toxina botulínica en frente · antes y después",
       before: toxinaAntes,
       after: toxinaDespues,
     },
@@ -30,13 +30,13 @@ export const beforeAfter = {
   corporales: [
     {
       label: "HIFU · Celulitis",
-      alt: "HIFU corporal para celulitis — antes y después (1 sesión)",
+      alt: "HIFU corporal para celulitis · antes y después (1 sesión)",
       before: hifuCelulitisAntes,
       after: hifuCelulitisDespues,
     },
     {
       label: "HIFU corporal",
-      alt: "HIFU corporal — antes y después",
+      alt: "HIFU corporal · antes y después",
       before: hifuCorporalAntes,
       after: hifuCorporalDespues,
     },

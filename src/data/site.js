@@ -11,8 +11,8 @@ export const site = {
   instagramHandle: "@dermafisherton",
   address: "Schweitzer 8883 · Portero 4, Fisherton, Rosario",
   hours: [
-    { day: "Lunes a viernes", value: "[09:00 – 19:00]" },
-    { day: "Sábados", value: "[09:00 – 13:00]" },
+    { day: "Lunes a viernes", value: "[09:00 - 19:00]" },
+    { day: "Sábados", value: "[09:00 - 13:00]" },
     { day: "Domingos", value: "Cerrado" },
   ],
   mapsEmbed:
