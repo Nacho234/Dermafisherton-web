@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
 import {
   Stethoscope,
   HandHeart,
@@ -9,13 +15,14 @@ import {
   ArrowRight,
   ArrowUpRight,
   Drop,
-  Sun,
   Check,
   ShieldCheck,
   SealCheck,
   Leaf,
   Star,
   CaretDown,
+  Cpu,
+  Feather,
 } from "@phosphor-icons/react";
 
 import Reveal from "../components/Reveal";
@@ -23,288 +30,382 @@ import Button from "../components/Button";
 import EditorialImage from "../components/EditorialImage";
 import SectionHeader from "../components/SectionHeader";
 import TreatmentCard from "../components/TreatmentCard";
-import TestimonialCard from "../components/TestimonialCard";
 import CTASection from "../components/CTASection";
+import WaveEdge from "../components/WaveEdge";
 
 import { featured } from "../data/treatments";
 import {
   testimonials,
-  differentiators,
-  process,
   faqs,
   faqCategories,
 } from "../data/content";
 import { site, waLink } from "../data/site";
 
 const heroPortrait = "/hero/hero-portrait.webp";
+// Solo bordes laterales difuminados. El tope NO se difumina: el retrato sube
+// hasta quedar bajo el Navbar, que tapa el corte de la foto original.
+const heroPortraitMask =
+  "linear-gradient(to right, transparent 8%, #000 22%, #000 86%, transparent 100%)";
 
-const icons = { Stethoscope, HandHeart, Sparkle, MapPinLine };
-
-// Destacados del hero (card liquid glass, bajo los botones).
-const heroHighlights = [
-  { icon: Sparkle, text: "Armonización facial" },
-  { icon: Drop, text: "Skinbooster" },
-  { icon: Sun, text: "Peelings y manchas" },
+/* Titular con entrada palabra por palabra (máscara + stagger). Se lee como un
+   único <h1>; las palabras son solo envoltorios visuales. */
+const heroTitle = [
+  { w: "Dermatología" },
+  { w: "y" },
+  { w: "estética" },
+  { w: "avanzada" },
+  { w: "en" },
+  { w: "Fisherton", em: true },
 ];
 
-/* --------- Card "liquid glass" con destacados del hero ------------------- */
-function HeroHighlightsCard({ className = "", compact = false }) {
-  const radius = compact ? "rounded-2xl" : "rounded-[1.75rem]";
-  const topRadius = compact ? "rounded-t-2xl" : "rounded-t-[1.75rem]";
-  const rowPad = compact ? "gap-2.5 px-2.5 py-2" : "gap-3 px-3.5 py-3";
-  const iconBox = compact ? "h-7 w-7" : "h-9 w-9";
-  const iconSize = compact ? 14 : 18;
-  const textSize = compact ? "text-xs" : "text-[0.95rem]";
+function HeroTitle({ reduce }) {
   return (
-    <div
-      className={`relative w-full max-w-sm overflow-hidden ${radius} border border-white/60 bg-white/25 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_24px_60px_-24px_rgba(75,63,56,0.35)] backdrop-blur-xl ${className}`}
-    >
-      {/* reflejo superior tipo vidrio */}
-      <div
-        aria-hidden
-        className={`pointer-events-none absolute inset-x-0 top-0 h-1/2 ${topRadius} bg-gradient-to-b from-white/45 to-transparent`}
-      />
-      <ul className="relative divide-y divide-white/40">
-        {heroHighlights.map((h) => {
-          const Icon = h.icon;
-          return (
-            <li key={h.text} className={`flex items-center ${rowPad}`}>
-              <span
-                className={`grid ${iconBox} shrink-0 place-items-center rounded-full border border-white/60 bg-white/40 text-sage-deep`}
+    <h1 className="mt-5 pb-1 text-[2.6rem] leading-[1.06] sm:text-[3.35rem] md:text-[3.85rem]">
+      {heroTitle.map(({ w, em }, i) => {
+        const word = em ? (
+          <em className="font-normal italic text-brown">{w}</em>
+        ) : (
+          w
+        );
+        return (
+          <span key={w}>
+            <span className="inline-block overflow-hidden pb-[0.12em] align-bottom">
+              <motion.span
+                className="inline-block"
+                initial={reduce ? false : { y: "105%" }}
+                animate={{ y: 0 }}
+                transition={{
+                  duration: 0.9,
+                  delay: 0.08 + i * 0.07,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
               >
-                <Icon size={iconSize} weight="light" />
-              </span>
-              <span className={`${textSize} font-medium text-graphite`}>
-                {h.text}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+                {word}
+              </motion.span>
+            </span>
+            {i < heroTitle.length - 1 ? " " : null}
+          </span>
+        );
+      })}
+    </h1>
   );
 }
 
 /* ------------------------------- Hero ---------------------------------- */
 function Hero() {
+  const reduce = useReducedMotion();
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  // Parallax leve del retrato (solo transform; se anula con reduced-motion)
+  const portraitY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 56]);
+
   return (
-    <section className="relative overflow-hidden bg-warm-white">
-      <div className="container-page relative grid items-center gap-12 pt-28 pb-0 md:min-h-[calc(100dvh-76px)] md:grid-cols-12 md:items-start md:gap-10 md:pt-[6.5rem] md:pb-20">
-        {/* DESKTOP: panel de imagen de altura contenida, ocupando todo el ancho
-            del container y centrado verticalmente. Acomodá con objectPosition. */}
-        <div className="pointer-events-none absolute inset-x-0 top-[5.5rem] bottom-0 hidden overflow-hidden rounded-3xl md:block">
-          <img
-            src={heroPortrait}
-            alt="Cuidado profesional de la piel en Dermafisherton, Fisherton"
-            className="h-full w-full rounded-3xl object-cover"
+    <section ref={sectionRef} className="hero-bg relative overflow-hidden">
+      {/* Arcos dorados decorativos (solo PC): anillo detrás del retrato + curva inferior */}
+      <svg
+        aria-hidden
+        viewBox="0 0 100 100"
+        className="pointer-events-none absolute left-[67%] top-1/2 hidden aspect-square h-[122%] -translate-x-1/2 -translate-y-1/2 md:block"
+      >
+        <defs>
+          <linearGradient id="hero-gold-ring" x1="0" y1="0" x2="1" y2="0.7">
+            <stop offset="0" stopColor="#d6b46c" stopOpacity="0" />
+            <stop offset="0.55" stopColor="#d6b46c" stopOpacity="0" />
+            <stop offset="0.8" stopColor="#d6b46c" stopOpacity="0.6" />
+            <stop offset="1" stopColor="#b98f45" stopOpacity="0.95" />
+          </linearGradient>
+        </defs>
+        <circle
+          cx="50"
+          cy="50"
+          r="49"
+          fill="none"
+          stroke="url(#hero-gold-ring)"
+          strokeWidth="2.5"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+      <svg
+        aria-hidden
+        viewBox="0 0 300 120"
+        preserveAspectRatio="none"
+        className="pointer-events-none absolute bottom-[6%] left-0 hidden h-[16%] w-[26%] md:block"
+      >
+        <defs>
+          <linearGradient id="hero-gold-sweep" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#b98f45" stopOpacity="0.9" />
+            <stop offset="1" stopColor="#d6b46c" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M0 14 C 90 30, 170 78, 300 112"
+          fill="none"
+          stroke="url(#hero-gold-sweep)"
+          strokeWidth="2.5"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+
+      <div className="container-page relative grid items-center gap-12 pt-24 pb-0 md:min-h-[calc(100dvh-76px)] md:grid-cols-12 md:items-center md:gap-10 md:pt-24 md:pb-20">
+        {/* DESKTOP: retrato en estudio blanco puro integrado al fondo */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 bottom-0 hidden overflow-hidden md:block">
+          <motion.div
+            className="h-full w-full mix-blend-multiply"
             style={{
-              objectPosition: "50% center",
-              transform: "scale(0.9)",
-              transformOrigin: "100% 100%",
+              y: portraitY,
+              WebkitMaskImage: heroPortraitMask,
+              maskImage: heroPortraitMask,
             }}
+            initial={reduce ? false : { opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <img
+              src={heroPortrait}
+              alt="Cuidado profesional de la piel en Dermafisherton, Fisherton"
+              className="h-full w-full object-cover"
+              style={{
+                objectPosition: "55% center",
+                transform: "scale(0.92)",
+                transformOrigin: "100% 100%",
+              }}
+            />
+          </motion.div>
+          {/* Fundido inferior: los hombros se disuelven en el fondo champagne */}
+          <div
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#f2e3d3] to-transparent"
           />
         </div>
 
-        {/* IZQUIERDA: texto */}
-        <div className="relative z-10 md:col-span-6 lg:col-span-6">
+        {/* IZQUIERDA: stack disciplinado (eyebrow + H1 + subtext + CTAs) */}
+        <div className="relative z-10 md:col-span-6 md:pb-32 lg:col-span-6">
           <Reveal>
-            <span className="eyebrow">Dermatología · Estética · Fisherton</span>
+            <span className="inline-flex items-center text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-brown/80">
+              Dermatología · Estética · Fisherton
+            </span>
           </Reveal>
-          <Reveal delay={0.06}>
-            <h1 className="mt-5 text-[2.5rem] leading-[1.03] sm:text-[3.25rem] md:text-[3.75rem]">
-              Dermatología y estética avanzada en Fisherton
-            </h1>
-          </Reveal>
+          <HeroTitle reduce={reduce} />
           <Reveal delay={0.12}>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-brown/75">
+            <p className="mt-5 max-w-[44ch] text-lg leading-relaxed text-brown/75">
               Tratamientos personalizados para cuidar tu piel con criterio
               profesional, tecnología y resultados naturales.
             </p>
           </Reveal>
           <Reveal delay={0.18}>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Button to="/contacto" variant="primary" size="lg">
+            <div className="mt-8 flex flex-wrap items-center gap-3.5">
+              <Button to="/contacto" variant="gold" size="lg" arrow>
                 Reservar turno
               </Button>
-              <Button to="/tratamientos" variant="outline" size="lg">
+              <Button to="/tratamientos" variant="gold" size="lg" className="[--shine-delay:1.6s]">
                 Ver tratamientos
               </Button>
             </div>
           </Reveal>
 
-          {/* Card liquid glass con destacados (bajo los botones, solo PC) */}
-          <Reveal delay={0.26} className="hidden md:block">
-            <HeroHighlightsCard className="mt-8" />
-          </Reveal>
         </div>
 
-        {/* MOBILE: imagen apilada full-bleed (en desktop se usa el fondo) */}
-        <div className="-mx-6 md:hidden">
-          <Reveal delay={0.15} y={30} className="relative">
-            <EditorialImage
-              src={heroPortrait}
-              w={1400}
-              h={788}
-              alt="Cuidado profesional de la piel en Dermafisherton, Fisherton"
-              priority
-              scrim={false}
-              objectPosition="50% center"
-              rounded="rounded-none"
-              className="aspect-[4/5] w-full"
-            />
-            {/* Card liquid glass dentro de la imagen, abajo a la izquierda */}
-            <Reveal
-              delay={0.45}
-              className="absolute bottom-4 left-4 z-10 w-[58%] max-w-[12.5rem]"
-            >
-              <HeroHighlightsCard compact />
-            </Reveal>
+        {/* MOBILE: retrato en marco Double-Bezel con cápsula superpuesta */}
+        <div className="pb-6 md:hidden">
+          <Reveal delay={0.15} y={24} className="relative">
+            <div className="bezel-shell">
+              <EditorialImage
+                src={heroPortrait}
+                w={1400}
+                h={788}
+                alt="Cuidado profesional de la piel en Dermafisherton, Fisherton"
+                priority
+                scrim={false}
+                objectPosition="62% center"
+                rounded="bezel-core"
+                className="aspect-[4/5] w-full"
+              />
+            </div>
           </Reveal>
         </div>
       </div>
+      <WaveEdge to="#f1e6d8" />
     </section>
   );
 }
 
-/* ----------------- Carrusel de cualidades (bajo el hero) ---------------- */
+/* --------- Cinta editorial de cualidades (íconos finos Phosphor) -------- */
 const qualities = [
-  { e: "✨", t: "Resultados naturales" },
-  { e: "🌿", t: "Criterio dermatológico" },
-  { e: "🤍", t: "Atención personalizada" },
-  { e: "🔬", t: "Tecnología estética" },
-  { e: "💧", t: "Cuidado de la piel" },
-  { e: "⚕️", t: "Evaluación profesional" },
-  { e: "📍", t: "En Fisherton" },
-  { e: "🕊️", t: "Acompañamiento cercano" },
+  { Icon: Sparkle, t: "Resultados naturales" },
+  { Icon: Stethoscope, t: "Criterio dermatológico" },
+  { Icon: HandHeart, t: "Atención personalizada" },
+  { Icon: Cpu, t: "Tecnología estética" },
+  { Icon: Drop, t: "Salud y calidad de piel" },
+  { Icon: ShieldCheck, t: "Evaluación médica previa" },
+  { Icon: MapPinLine, t: "Sede en Fisherton" },
+  { Icon: Feather, t: "Acompañamiento cercano" },
 ];
 
 function QualitiesMarquee() {
   const reduce = useReducedMotion();
   const track = [...qualities, ...qualities];
   return (
-    <section className="border-y border-graphite/[0.07] bg-warm-white">
-      <div className="relative overflow-hidden py-5 md:py-6">
-        {/* fundidos en los bordes */}
-        <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-warm-white to-transparent md:w-24" />
-        <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-warm-white to-transparent md:w-24" />
-        <motion.ul
-          className="flex w-max items-center gap-10 whitespace-nowrap md:gap-14"
-          animate={reduce ? undefined : { x: ["0%", "-50%"] }}
-          transition={{ duration: 42, ease: "linear", repeat: Infinity }}
+    <section className="no-wall border-y border-[#e6d8c4] bg-[#f1e6d8]">
+      <div className="marquee-viewport relative overflow-hidden py-5 md:py-6">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#f1e6d8] to-transparent md:w-28"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#f1e6d8] to-transparent md:w-28"
+        />
+        <ul
+          className={`flex w-max items-center gap-10 whitespace-nowrap md:gap-14 ${
+            reduce ? "" : "marquee-track"
+          }`}
         >
-          {track.map((q, i) => (
-            <li key={i} className="flex items-center gap-2.5">
-              <span className="text-base md:text-lg" aria-hidden>{q.e}</span>
-              <span className="text-[0.95rem] font-medium text-brown md:text-base">{q.t}</span>
+          {track.map(({ Icon, t }, i) => (
+            <li
+              key={i}
+              aria-hidden={i >= qualities.length ? true : undefined}
+              className="flex items-center gap-3"
+            >
+              <span
+                aria-hidden
+                className="grid h-7 w-7 place-items-center rounded-full border border-sage/35 bg-sage/15 text-sage-deep"
+              >
+                <Icon size={15} weight="light" />
+              </span>
+              <span className="text-[0.93rem] font-medium tracking-[-0.005em] text-brown/85 md:text-[0.96rem]">
+                {t}
+              </span>
             </li>
           ))}
-        </motion.ul>
+        </ul>
       </div>
     </section>
   );
 }
 
-/* --------------------------- Diferenciales ------------------------------ */
-// 3 círculos con imagen adentro. Poné la imagen real en `img`
-// (ej. "/circulos/dermatologia.webp" dentro de public/circulos/); si queda
-// vacío usa un placeholder.
+/* --------------------------- Especialidades ----------------------------- */
 const circleHighlights = [
   {
     title: "Dermatología clínica",
-    text: "Diagnóstico y cuidado de la salud de tu piel.",
+    text: "Diagnóstico y cuidado integral de la salud de tu piel.",
     img: "/circulos/1.webp",
     to: "/tratamientos#dermatologia-clinica",
-    seed: "circle-dermatologia",
   },
   {
     title: "Estética facial",
-    text: "Tratamientos faciales indicados según tu piel.",
+    text: "Procedimientos faciales indicados con equilibrio y naturalidad.",
     img: "/circulos/2.webp",
     to: "/tratamientos#estetica-facial",
-    seed: "circle-estetica",
   },
   {
     title: "Tecnología estética",
-    text: "Protocolos y aparatología modernos y seguros.",
+    text: "Protocolos y aparatología actualizados con respaldo médico.",
     img: "/circulos/3.webp",
     to: "/tecnologia",
-    seed: "circle-tecnologia",
   },
 ];
 
 function Differentiators() {
   return (
-    <section className="border-y border-cream bg-cream-soft/40">
-      <div className="mx-auto max-w-[1360px] px-4 py-20 md:px-10 md:py-28">
-        {/* Encabezado de la sección */}
-        <Reveal className="mx-auto mb-14 max-w-2xl text-center md:mb-20">
-          {/* eyebrow entre líneas */}
-          <div className="flex items-center justify-center gap-4">
-            <span className="h-px w-8 bg-sage-deep/40 md:w-12" />
-            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-sage-deep">
-              Especialidades
+    <section className="section-champagne relative overflow-hidden">
+      {/* Arcos dorados laterales: repiten el anillo del hero (solo PC, muy tenues) */}
+      {[
+        "-left-[19rem] -top-24",
+        "-right-[19rem] top-16",
+      ].map((pos) => (
+        <svg
+          key={pos}
+          aria-hidden
+          viewBox="0 0 100 100"
+          className={`pointer-events-none absolute hidden h-[38rem] w-[38rem] md:block ${pos}`}
+        >
+          <circle
+            cx="50"
+            cy="50"
+            r="49"
+            fill="none"
+            stroke="#c9a35a"
+            strokeOpacity="0.42"
+            strokeWidth="1.5"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      ))}
+      <div className="container-page relative py-24 md:py-32">
+        {/* Encabezado: ornamento dorado + título con palabra en dorado cursiva */}
+        <Reveal className="mx-auto mb-14 max-w-2xl text-center md:mb-16">
+          <div className="mx-auto mb-6 flex items-center justify-center gap-4" aria-hidden>
+            <span className="h-px w-14 bg-gradient-to-r from-transparent to-[#c9a35a]/70" />
+            <span className="grid h-10 w-10 place-items-center rounded-full border border-[#c9a35a]/70 bg-white/70 text-[#a98338]">
+              <Sparkle size={18} weight="light" />
             </span>
-            <span className="h-px w-8 bg-sage-deep/40 md:w-12" />
+            <span className="h-px w-14 bg-gradient-to-l from-transparent to-[#c9a35a]/70" />
           </div>
-          {/* título */}
-          <h2 className="mt-5 text-3xl leading-tight sm:text-4xl md:text-[2.75rem]">
-            Nuestras especialidades
+          <h2 className="pb-1 text-3xl leading-[1.12] sm:text-4xl md:text-[2.95rem]">
+            Nuestras áreas de{" "}
+            <em className="font-normal italic text-brown">atención</em>
           </h2>
-          {/* texto */}
           <p className="mx-auto mt-4 max-w-xl text-[1.05rem] leading-relaxed text-brown/75">
-            Tres áreas de atención pensadas para lo que tu piel necesita. Elegí
-            una y conocé los tratamientos.
+            Tres especialidades pensadas para lo que tu piel necesita. Explorá
+            cada área y conocé los tratamientos disponibles.
           </p>
         </Reveal>
 
-        <div className="mx-auto grid gap-12 md:grid-cols-3 md:gap-8 lg:gap-10">
+        <div className="grid gap-8 md:grid-cols-3 lg:gap-9">
           {circleHighlights.map((c, i) => (
-            <Reveal key={c.title} delay={i * 0.1}>
-              <div className="group relative aspect-square w-full overflow-hidden rounded-3xl shadow-lift ring-1 ring-black/[0.04]">
-                {/* 1 · foto de la card */}
-                <img
-                  src={c.img}
-                  alt={c.title}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-                {/* 2 · card dentro de la card: panel blanco con top curvo (swoosh) */}
-                <div className="absolute inset-x-0 bottom-0">
-                  <svg
-                    viewBox="0 0 100 26"
-                    preserveAspectRatio="none"
-                    className="block h-14 w-full md:h-16"
-                    aria-hidden
-                  >
-                    <path
-                      d="M0,26 L0,4 L32,4 C42,4 42,16 52,16 L100,16 L100,26 Z"
-                      fill="#ffffff"
-                    />
-                  </svg>
-                  <div className="-mt-px bg-white px-6 pb-6">
-                    <h3 className="font-display text-xl text-graphite md:text-2xl">
-                      {c.title}
-                    </h3>
-                    {c.text && (
-                      // Colapsa en PC (solo título) y se despliega al hover.
-                      <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr]">
+            <Reveal key={c.title} delay={i * 0.09}>
+              <Link
+                to={c.to}
+                className="bezel-shell group block transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1.5 hover:shadow-lift focus-visible:-translate-y-1.5 focus-visible:shadow-lift"
+              >
+                <div className="bezel-core relative aspect-[4/4.3] w-full overflow-hidden bg-cream">
+                  <img
+                    src={c.img}
+                    alt={c.title}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-[950ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.05]"
+                  />
+
+                  {/* Panel inferior con curva orgánica + insignia circular */}
+                  <div className="absolute inset-x-0 bottom-0">
+                    <svg
+                      viewBox="0 0 100 26"
+                      preserveAspectRatio="none"
+                      className="block h-12 w-full md:h-14"
+                      aria-hidden
+                    >
+                      <path
+                        d="M0,26 L0,4 L32,4 C42,4 42,16 52,16 L100,16 L100,26 Z"
+                        fill="#ffffff"
+                      />
+                    </svg>
+                    <div className="-mt-px bg-surface-pure px-6 pb-6 pt-1">
+                      <div className="flex items-center justify-between gap-3">
+                        <h3 className="font-display text-2xl text-graphite">
+                          {c.title}
+                        </h3>
+                        <span
+                          aria-hidden
+                          className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-cream bg-cream/35 text-brown transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:border-sage/50 group-hover:bg-sage-deep group-hover:text-warm-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        >
+                          <ArrowUpRight size={14} weight="bold" />
+                        </span>
+                      </div>
+
+                      <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] md:group-focus-visible:grid-rows-[1fr]">
                         <div className="overflow-hidden">
-                          <p className="max-w-[26ch] pt-1 text-sm leading-snug text-brown/65 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100">
+                          <p className="max-w-[30ch] pt-2 text-sm leading-relaxed text-brown/70 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100">
                             {c.text}
                           </p>
-                          <Link
-                            to={c.to}
-                            className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-sage-deep transition-all duration-300 hover:gap-2.5 hover:text-brown md:opacity-0 md:group-hover:opacity-100"
-                          >
-                            Más información
-                            <ArrowRight size={16} weight="bold" />
-                          </Link>
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </Reveal>
           ))}
         </div>
@@ -313,28 +414,30 @@ function Differentiators() {
   );
 }
 
-/* --------------------- Enfoque editorial (bajo las cards) --------------- */
+/* --------------------- Enfoque editorial (split 50/50) ------------------ */
 function Enfoque() {
   const puntos = [
-    "Evaluación previa y diagnóstico",
+    "Evaluación previa y diagnóstico dermatológico",
     "Plan indicado según tu piel y tus objetivos",
-    "Acompañamiento y seguimiento posterior",
+    "Acompañamiento y seguimiento en cada etapa",
   ];
   return (
-    <section className="container-page py-20 md:py-28">
-      <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
+    <section className="warm-a">
+    <div className="container-page py-24 md:py-32">
+      <div className="grid items-center gap-12 md:grid-cols-12 md:gap-16">
         {/* Texto */}
-        <div>
+        <div className="md:col-span-6">
           <Reveal>
             <span className="eyebrow">Nuestro criterio</span>
           </Reveal>
           <Reveal delay={0.06}>
-            <h2 className="mt-5 text-3xl leading-[1.1] sm:text-4xl md:text-[2.75rem]">
-              Tratamientos indicados, no de catálogo
+            <h2 className="mt-4 pb-1 text-3xl leading-[1.12] sm:text-4xl md:text-[2.95rem]">
+              Tratamientos indicados,{" "}
+              <em className="font-normal italic text-brown">no de catálogo</em>
             </h2>
           </Reveal>
           <Reveal delay={0.12}>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-brown/75">
+            <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-brown/75">
               No aplicamos protocolos genéricos. Cada plan se define después de
               evaluar tu piel, tus antecedentes y lo que querés mejorar, buscando
               seguridad y resultados coherentes con vos.
@@ -343,158 +446,141 @@ function Enfoque() {
           <Reveal delay={0.18}>
             <ul className="mt-8 space-y-3.5">
               {puntos.map((t) => (
-                <li key={t} className="flex items-center gap-3 text-brown/85">
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-sage/20 text-sage-deep">
-                    <Check size={14} weight="bold" />
+                <li key={t} className="flex items-center gap-3.5 text-brown/85">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-sage/40 bg-sage/20 text-sage-deep">
+                    <Check size={13} weight="bold" />
                   </span>
-                  {t}
+                  <span className="text-[0.98rem]">{t}</span>
                 </li>
               ))}
             </ul>
           </Reveal>
           <Reveal delay={0.24}>
             <div className="mt-9">
-              <Button to="/nosotros" variant="outline" size="md">
+              <Button to="/nosotros" variant="outline" size="md" arrow>
                 Conocé nuestro enfoque
               </Button>
             </div>
           </Reveal>
         </div>
 
-        {/* Imagen con contenido encima (etiqueta + título + CTA) */}
-        <Reveal y={26} className="group relative overflow-hidden rounded-3xl">
-          <video
-            src="/enfoque/enfoque.mp4"
-            poster="/enfoque/enfoque.webp"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            aria-label="Piel sana y natural — Dermafisherton"
-            className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-          />
+        {/* Video con Double-Bezel y contenido superpuesto */}
+        <Reveal y={26} className="bezel-shell group md:col-span-6">
+          <div className="bezel-core relative overflow-hidden bg-cream">
+            <video
+              src="/enfoque/enfoque.mp4"
+              poster="/enfoque/enfoque.webp"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              aria-label="Piel sana y natural en Dermafisherton"
+              className="aspect-[4/4.8] w-full object-cover transition-transform duration-[950ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.04]"
+            />
 
-          {/* Scrim para legibilidad */}
-          <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-graphite/90 via-graphite/25 to-transparent" />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#231F1D]/90 via-[#231F1D]/30 to-transparent"
+            />
 
-          {/* Contenido sobre la imagen */}
-          <div className="absolute inset-x-0 bottom-0 p-7 sm:p-8">
-            <span className="eyebrow !text-white/80">Piel sana</span>
-            <h3 className="mt-2 max-w-xs text-2xl leading-tight text-white sm:text-3xl">
-              Resultados que se ven naturales
-            </h3>
-            <Button
-              to="/contacto"
-              variant="sage"
-              size="md"
-              className="mt-5"
-            >
-              Reservar evaluación
-            </Button>
+            <div className="absolute inset-x-0 bottom-0 p-7 sm:p-9">
+              <h3 className="max-w-xs text-2xl leading-tight text-white sm:text-3xl">
+                Resultados que se ven naturales
+              </h3>
+              <Button
+                to="/contacto"
+                variant="sage"
+                size="md"
+                arrow
+                className="mt-5"
+              >
+                Reservar evaluación
+              </Button>
+            </div>
           </div>
         </Reveal>
       </div>
+    </div>
     </section>
   );
 }
 
-/* ------- Foto del equipo en una sola card (bajo "Nuestro criterio") ------ */
-const MOSAIC_SRC = "/mosaico/equipo.png"; // 1672×941 → 16:9
+/* ------- Foto panorámica del equipo + sellos de confianza --------------- */
+const MOSAIC_SRC = "/mosaico/equipo.png";
 
-// Sellos monocromáticos bajo la imagen del equipo.
 const mosaicBadges = [
   { Icon: ShieldCheck, label: "Seguridad médica" },
-  { Icon: SealCheck, label: "Profesionales certificados" },
+  { Icon: SealCheck, label: "Equipo certificado" },
   { Icon: HandHeart, label: "Atención cercana" },
-  { Icon: Leaf, label: "Resultados naturales" },
+  { Icon: Leaf, label: "Mirada natural" },
 ];
 
 function MosaicBento() {
   const reduce = useReducedMotion();
   return (
-    <section className="container-page py-20 md:py-28">
-      <Reveal className="mx-auto mb-12 flex max-w-2xl flex-col items-center text-center md:mb-16">
-        <span className="mb-4 flex items-center gap-3">
-          <span className="h-px w-8 bg-sage-deep/50" />
-          <span className="eyebrow">Nuestro espacio</span>
-          <span className="h-px w-8 bg-sage-deep/50" />
-        </span>
-        <h2 className="text-3xl leading-[1.08] sm:text-4xl md:text-[2.75rem]">
-          Un espacio pensado en cada{" "}
-          <span className="text-sage-deep">detalle</span>
-        </h2>
-        <p className="mt-5 max-w-xl text-[1.05rem] leading-relaxed text-brown/75">
-          Cuidamos el entorno con la misma atención con la que definimos cada
-          tratamiento.
-        </p>
-      </Reveal>
-      <motion.div
-        className="group relative mx-auto w-full max-w-5xl overflow-hidden rounded-2xl bg-cream ring-1 ring-cream/70 shadow-[0_24px_60px_-30px_rgba(75,63,56,0.55)] sm:rounded-3xl"
-        initial={reduce ? false : { opacity: 0, y: 26 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <img
-          src={MOSAIC_SRC}
-          alt="Equipo profesional de Dermafisherton"
-          width={1672}
-          height={941}
-          loading="lazy"
-          className="block h-auto w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-        />
-
-        {/* Capa gris sobre toda la imagen + refuerzo arriba/abajo */}
-        <span className="pointer-events-none absolute inset-0 bg-graphite/50" />
-        <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-graphite/40 via-transparent to-graphite/50" />
-
-        {/* Texto arriba (centrado) */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 p-6 text-center sm:p-8 md:p-10">
-          <span className="eyebrow !text-white/80">Nuestro equipo</span>
-        </div>
-
-        {/* Texto abajo (centrado) */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 text-center sm:p-8 md:p-10">
-          <h3 className="mx-auto max-w-2xl text-2xl leading-tight text-white sm:text-3xl md:text-4xl">
-            Profesionales dedicados a cuidar tu piel
-          </h3>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/85 sm:text-base">
-            Un equipo médico y estético que trabaja en conjunto, con criterio y
-            cercanía en cada consulta.
+    <section className="warm-b py-24 md:py-32">
+      <div className="container-page">
+        <Reveal className="mx-auto mb-12 flex max-w-2xl flex-col items-center text-center md:mb-16">
+          <h2 className="pb-1 text-3xl leading-[1.08] sm:text-4xl md:text-[2.95rem]">
+            Un espacio pensado en cada{" "}
+            <em className="font-normal italic text-sage-deep">detalle</em>
+          </h2>
+          <p className="mt-4 max-w-xl text-[1.05rem] leading-relaxed text-brown/75">
+            Cuidamos el entorno y el acompañamiento humano con la misma
+            dedicación con la que indicamos cada tratamiento.
           </p>
-        </div>
-      </motion.div>
+        </Reveal>
 
-      {/* Símbolos / sellos monocromáticos debajo de la imagen */}
-      <div className="mx-auto mt-10 flex max-w-4xl flex-wrap items-start justify-center gap-x-10 gap-y-8 sm:mt-12 sm:gap-x-16">
-        {mosaicBadges.map(({ Icon, label }, i) => (
-          <Reveal key={label} delay={i * 0.08} className="w-28">
-            <motion.div
-              className="group/badge flex cursor-default flex-col items-center text-center"
-              whileHover={reduce ? undefined : { scale: 1.08 }}
-              transition={{ type: "spring", stiffness: 300, damping: 18 }}
-            >
-              <motion.span
-                className="text-graphite transition-colors duration-300 group-hover/badge:text-sage-deep"
-                animate={reduce ? undefined : { y: [0, -12, 0] }}
-                transition={{
-                  duration: 0.55,
-                  times: [0, 0.5, 1],
-                  ease: "easeInOut",
-                  repeat: Infinity,
-                  repeatDelay: 7,
-                  delay: i * 0.15,
-                }}
-              >
-                <Icon size={34} weight="thin" />
-              </motion.span>
-              <span className="mt-3 text-xs font-medium uppercase tracking-[0.12em] text-brown/70">
-                {label}
-              </span>
-            </motion.div>
-          </Reveal>
-        ))}
+        <motion.div
+          className="bezel-shell group mx-auto w-full max-w-5xl"
+          initial={reduce ? false : { opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="bezel-core relative overflow-hidden bg-cream">
+            <img
+              src={MOSAIC_SRC}
+              alt="Equipo profesional de Dermafisherton"
+              width={1672}
+              height={941}
+              loading="lazy"
+              className="block h-auto w-full object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03]"
+            />
+
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#231F1D]/80 from-0% via-[#231F1D]/25 via-40% to-transparent to-65%"
+            />
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 text-center sm:p-9 md:p-12">
+              <h3 className="mx-auto max-w-2xl text-2xl leading-tight text-white sm:text-3xl md:text-4xl">
+                Profesionales dedicados a cuidar tu piel
+              </h3>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/85 sm:text-base">
+                Un equipo médico y estético que trabaja en conjunto, con criterio y
+                cercanía en cada consulta.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Sellos editoriales en medallones Double-Bezel */}
+        <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
+          {mosaicBadges.map(({ Icon, label }, i) => (
+            <Reveal key={label} delay={i * 0.07}>
+              <div className="group/badge flex flex-col items-center px-2 py-2 text-center">
+                <span className="grid h-12 w-12 place-items-center rounded-full border border-[#c9a35a]/70 bg-white/70 text-[#a98338] shadow-[0_2px_8px_-2px_rgba(58,48,42,0.12)] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover/badge:-translate-y-0.5">
+                  <Icon size={24} weight="light" />
+                </span>
+                <span className="mt-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-brown/75">
+                  {label}
+                </span>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -510,7 +596,7 @@ function useDragScroll() {
     let startX = 0;
     let startLeft = 0;
     const onDown = (e) => {
-      if (e.pointerType !== "mouse") return; // táctil = scroll nativo
+      if (e.pointerType !== "mouse") return;
       down = true;
       startX = e.pageX;
       startLeft = el.scrollLeft;
@@ -559,7 +645,8 @@ function Featured() {
   };
 
   return (
-    <section className="container-page py-20 md:py-28">
+    <section className="warm-a">
+    <div className="container-page py-24 md:py-32">
       <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <SectionHeader
           eyebrow="Tratamientos"
@@ -567,24 +654,16 @@ function Featured() {
           intro="Cada procedimiento se indica según una evaluación previa, buscando seguridad, naturalidad y resultados armónicos."
         />
         <Reveal delay={0.1}>
-          <Link
-            to="/tratamientos"
-            className="group inline-flex items-center gap-2 text-sm font-semibold text-brown"
-          >
-            Ver todos
-            <ArrowRight
-              size={16}
-              weight="bold"
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </Link>
+          <Button to="/tratamientos" variant="outline" size="md" arrow>
+            Ver todos los tratamientos
+          </Button>
         </Reveal>
       </div>
 
-      {/* Mobile: carrusel de a una card (drag/swipe con snap). sm+: grilla. */}
+      {/* Mobile: carrusel con snap. sm+: grilla. */}
       <div
         ref={trackRef}
-        className="mt-12 -mx-6 flex cursor-grab snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain py-3 select-none [scrollbar-width:none] sm:mx-0 sm:grid sm:cursor-auto sm:snap-none sm:select-auto sm:grid-cols-2 sm:gap-6 sm:overflow-x-visible sm:overflow-y-visible sm:py-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden"
+        className="mt-14 -mx-6 flex cursor-grab snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain py-3 select-none [scrollbar-width:none] sm:mx-0 sm:grid sm:cursor-auto sm:snap-none sm:select-auto sm:grid-cols-2 sm:gap-6 sm:overflow-x-visible sm:overflow-y-visible sm:py-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden"
       >
         {featured.map((t, i) => (
           <Reveal
@@ -598,8 +677,8 @@ function Featured() {
         ))}
       </div>
 
-      {/* Puntitos (solo mobile) */}
-      <div className="mt-6 flex justify-center gap-2 sm:hidden">
+      {/* Indicador mobile (touch target >= 44px con hit-area expandido) */}
+      <div className="mt-4 flex flex-wrap justify-center sm:hidden">
         {featured.map((t, i) => (
           <button
             key={t.slug}
@@ -607,120 +686,21 @@ function Featured() {
             onClick={() => goTo(i)}
             aria-label={`Ir al tratamiento ${i + 1}`}
             aria-current={active === i}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              active === i ? "w-6 bg-sage-deep" : "w-2 bg-brown/25"
-            }`}
-          />
+            className="grid min-h-[44px] min-w-[28px] place-items-center px-1"
+          >
+            <span
+              className={`block h-2 rounded-full transition-all duration-300 ${
+                active === i ? "w-6 bg-sage-deep" : "w-2 bg-brown/25"
+              }`}
+            />
+          </button>
         ))}
       </div>
+    </div>
     </section>
   );
 }
 
-/* --------------------------- Enfoque (editorial) ------------------------ */
-function Approach() {
-  return (
-    <section className="bg-brown text-warm-white">
-      <div className="container-page grid items-center gap-12 py-20 md:grid-cols-12 md:gap-16 md:py-28">
-        <Reveal className="md:col-span-6" y={28}>
-          <EditorialImage
-            seed="natural-skin-result-calm"
-            w={1000}
-            h={1000}
-            alt="Resultados naturales, indicados según cada piel"
-            grayscale={false}
-            className="aspect-square w-full"
-          />
-        </Reveal>
-        <div className="md:col-span-6">
-          <SectionHeader
-            title="Resultados naturales, indicados según tu piel"
-            className="[&_h2]:text-warm-white"
-          />
-          <Reveal delay={0.1}>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-warm-white/75">
-              En Dermafisherton cada tratamiento comienza con una evaluación
-              profesional. La prioridad no es transformar tu rostro, sino
-              acompañar lo que tu piel necesita con seguridad, equilibrio y
-              naturalidad.
-            </p>
-          </Reveal>
-          <Reveal delay={0.16}>
-            <div className="mt-8">
-              <Button to="/nosotros" variant="sage" size="md">
-                Conocé nuestro enfoque
-              </Button>
-            </div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ----------------------------- Proceso ---------------------------------- */
-function Process() {
-  return (
-    <section className="container-page py-20 md:py-28">
-      <SectionHeader
-        eyebrow="Cómo trabajamos"
-        title="Un proceso claro, de principio a fin"
-        align="center"
-        className="mx-auto"
-      />
-      <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
-        {process.map((p, i) => (
-          <Reveal key={p.n} delay={i * 0.1}>
-            <div className="relative">
-              <span className="font-display text-6xl text-sage/60 md:text-7xl">
-                {p.n}
-              </span>
-              <h3 className="mt-3 text-2xl text-graphite">{p.title}</h3>
-              <p className="mt-3 max-w-xs text-[0.98rem] leading-relaxed text-brown/70">
-                {p.text}
-              </p>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* --------------------------- Mini Nosotros ------------------------------ */
-function AboutTeaser() {
-  return (
-    <section className="border-t border-cream bg-cream-soft/40">
-      <div className="container-page grid items-center gap-12 py-20 md:grid-cols-12 md:gap-16 md:py-28">
-        <div className="md:col-span-7">
-          <h2 className="text-3xl leading-tight sm:text-4xl md:text-[2.75rem]">
-            Un espacio dermatológico y estético en Fisherton
-          </h2>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-brown/75">
-            Dermafisherton combina atención profesional, estética avanzada y un
-            acompañamiento cercano para cuidar tu piel de forma personalizada.
-          </p>
-          <div className="mt-8">
-            <Button to="/nosotros" variant="outline" size="md">
-              Conocer más
-            </Button>
-          </div>
-        </div>
-        <Reveal className="md:col-span-5" y={28}>
-          <EditorialImage
-            seed="clinic-interior-fisherton"
-            w={800}
-            h={900}
-            alt="Interior de la clínica Dermafisherton en Fisherton"
-            className="aspect-[4/5] w-full"
-          />
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------------------- Testimonios ------------------------------- */
 /* --------------------------------- FAQ --------------------------------- */
 function FAQ() {
   const reduce = useReducedMotion();
@@ -735,71 +715,85 @@ function FAQ() {
   };
 
   return (
-    <section className="container-page py-20 md:py-28">
-      <div className="grid gap-10 md:grid-cols-12 md:gap-14">
+    <section className="warm-b py-24 md:py-32">
+      <div className="container-page grid gap-10 md:grid-cols-12 md:gap-14">
         {/* Columna izquierda */}
         <div className="md:col-span-4 md:sticky md:top-28 md:self-start">
-          <span className="inline-flex items-center gap-2 rounded-full border border-cream bg-warm-white px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.14em] text-taupe">
-            <span className="h-1.5 w-1.5 rounded-full bg-sage-deep" />
-            FAQ
-          </span>
-          <h2 className="mt-6 font-display text-3xl leading-[1.1] text-graphite sm:text-4xl md:text-[2.6rem]">
+          <h2 className="font-display text-3xl leading-[1.08] text-graphite sm:text-4xl md:text-[2.75rem]">
             Respuestas a las dudas más frecuentes
           </h2>
-          <p className="mt-5 max-w-md text-[1.02rem] leading-relaxed text-brown/70">
+          <p className="mt-4 max-w-md text-[1.02rem] leading-relaxed text-brown/72">
             Todo lo que suele surgir antes de una consulta: cómo trabajamos, los
             turnos y qué esperar de cada tratamiento.
           </p>
 
-          {/* Categorías */}
-          <div className="mt-8 flex flex-col gap-1.5">
-            {faqCategories.map((c) => (
-              <button
-                key={c.slug}
-                type="button"
-                onClick={() => selectCat(c.slug)}
-                aria-pressed={cat === c.slug}
-                className={`rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors ${
-                  cat === c.slug
-                    ? "bg-sage/15 text-brown"
-                    : "text-taupe hover:bg-black/[0.03] hover:text-brown"
-                }`}
-              >
-                {c.label}
-              </button>
-            ))}
+          {/* Categorías con indicador fluido */}
+          <div className="mt-8 flex flex-col gap-1.5 rounded-2xl border border-cream bg-cream/25 p-1.5">
+            {faqCategories.map((c) => {
+              const isSelected = cat === c.slug;
+              return (
+                <button
+                  key={c.slug}
+                  type="button"
+                  onClick={() => selectCat(c.slug)}
+                  aria-pressed={isSelected}
+                  className={`relative rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors duration-300 ${
+                    isSelected
+                      ? "text-graphite"
+                      : "text-brown/68 hover:text-graphite"
+                  }`}
+                >
+                  {isSelected && (
+                    <motion.span
+                      layoutId="home-faq-cat"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      className="absolute inset-0 -z-10 rounded-xl border border-cream bg-surface-pure shadow-ambient"
+                    />
+                  )}
+                  {c.label}
+                </button>
+              );
+            })}
           </div>
 
-          {/* Card de contacto */}
-          <div className="mt-8 rounded-2xl border border-cream bg-cream-soft/60 p-6">
-            <h3 className="font-display text-xl text-graphite">
-              ¿Te quedan dudas?
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-brown/70">
-              Escribinos y te ayudamos a coordinar tu consulta o a resolver
-              cualquier pregunta.
-            </p>
-            <a
-              href={waLink("Hola, tengo una consulta.")}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-sage-deep transition-colors hover:text-brown"
-            >
-              Escribinos
-              <ArrowRight size={15} weight="bold" />
-            </a>
+          {/* Card de contacto en Double-Bezel */}
+          <div className="bezel-shell mt-7">
+            <div className="bezel-core bg-surface-pure p-6">
+              <h3 className="font-display text-xl text-graphite">
+                ¿Te quedan dudas?
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-brown/72">
+                Escribinos y te orientamos para coordinar tu consulta o resolver
+                cualquier pregunta.
+              </p>
+              <a
+                href={waLink("Hola, tengo una consulta.")}
+                target="_blank"
+                rel="noreferrer"
+                className="group mt-4 inline-flex items-center gap-2 text-sm font-semibold text-sage-deep transition-colors hover:text-brown"
+              >
+                Consultar por WhatsApp
+                <ArrowRight
+                  size={15}
+                  weight="bold"
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </a>
+            </div>
           </div>
         </div>
 
         {/* Columna derecha: acordeón */}
-        <div className="flex flex-col gap-3 md:col-span-8 md:mt-14 md:self-start">
+        <div className="flex flex-col gap-3.5 md:col-span-8 md:mt-4 md:self-start">
           {items.map((item, i) => {
             const isOpen = open === i;
             return (
               <div
                 key={item.q}
-                className={`overflow-hidden rounded-2xl border border-cream transition-shadow ${
-                  isOpen ? "bg-warm-white shadow-soft" : "bg-cream-soft/50"
+                className={`overflow-hidden rounded-[1.5rem] border transition-all duration-300 ${
+                  isOpen
+                    ? "border-sage/50 bg-surface-pure shadow-soft"
+                    : "border-cream bg-warm-white/70 hover:border-taupe/35 hover:bg-warm-white"
                 }`}
               >
                 <button
@@ -808,15 +802,17 @@ function FAQ() {
                   aria-expanded={isOpen}
                   className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left"
                 >
-                  <span className="font-medium text-graphite md:text-lg">
+                  <span className="font-display text-xl font-medium text-graphite md:text-[1.35rem]">
                     {item.q}
                   </span>
                   <span
-                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-taupe/25 text-brown transition-transform duration-300 ${
-                      isOpen ? "rotate-180 bg-sage/20" : ""
+                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                      isOpen
+                        ? "rotate-180 border-sage/40 bg-sage/20 text-sage-deep"
+                        : "border-cream bg-cream/30 text-brown"
                     }`}
                   >
-                    <CaretDown size={15} weight="bold" />
+                    <CaretDown size={14} weight="bold" />
                   </span>
                 </button>
                 <AnimatePresence initial={false}>
@@ -825,10 +821,10 @@ function FAQ() {
                       initial={reduce ? false : { height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="px-6 pb-6 pr-12 leading-relaxed text-brown/75">
+                      <p className="max-w-[62ch] px-6 pb-6 pr-12 leading-relaxed text-brown/75">
                         {item.a}
                       </p>
                     </motion.div>
@@ -843,6 +839,7 @@ function FAQ() {
   );
 }
 
+/* ---------------------------- Testimonios ------------------------------- */
 const testimonialVariants = {
   enter: (d) => ({ opacity: 0, x: d > 0 ? 48 : -48 }),
   center: { opacity: 1, x: 0 },
@@ -852,105 +849,138 @@ const testimonialVariants = {
 function Testimonials() {
   const reduce = useReducedMotion();
   const [[index, dir], setState] = useState([0, 0]);
+  const [paused, setPaused] = useState(false);
   const n = testimonials.length;
 
   const paginate = (d) => setState(([prev]) => [(prev + d + n) % n, d]);
   const goTo = (idx) => setState(([prev]) => [idx, idx >= prev ? 1 : -1]);
 
-  // Autoplay suave (pausado si el usuario prefiere menos movimiento)
+  // Autoplay solo en mobile (en desktop se ven las 3 cards) y con pausa
+  // mientras la persona toca, arrastra, apunta o enfoca el carrusel.
   useEffect(() => {
-    if (reduce) return;
+    if (reduce || paused) return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
     const id = setInterval(() => setState(([prev]) => [(prev + 1) % n, 1]), 6500);
     return () => clearInterval(id);
-  }, [reduce, n]);
+  }, [reduce, paused, n]);
 
   const t = testimonials[index];
 
   return (
-    <section className="container-page py-20 md:py-28">
-      <SectionHeader
-        title="Lo que cuentan nuestras pacientes"
-        align="center"
-        className="mx-auto"
-      />
+    <section className="warm-a py-24 md:py-32">
+      <div className="container-page">
+        <SectionHeader
+          title="Lo que cuentan nuestras pacientes"
+          align="center"
+          className="mx-auto"
+        />
 
-      {/* Desktop: grilla de 3 cards */}
-      <div className="mt-14 hidden gap-6 md:grid md:grid-cols-3">
-        {testimonials.map((item, idx) => (
-          <Reveal key={item.quote} delay={idx * 0.1}>
-            <figure className="flex h-full flex-col rounded-3xl border border-cream bg-warm-white p-8 shadow-soft">
-              <div className="flex gap-1 text-sage-deep">
-                {Array.from({ length: 5 }).map((_, s) => (
-                  <Star key={s} size={16} weight="fill" />
-                ))}
+        {/* Desktop: 3 cards en Double-Bezel */}
+        <div className="mt-14 hidden gap-6 md:grid md:grid-cols-3">
+          {testimonials.map((item, idx) => (
+            <Reveal key={item.quote} delay={idx * 0.1}>
+              <div className="bezel-shell h-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1">
+                <figure className="bezel-core flex h-full flex-col justify-between bg-surface-pure p-8">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-1 text-sage-deep">
+                        {Array.from({ length: 5 }).map((_, s) => (
+                          <Star key={s} size={15} weight="fill" />
+                        ))}
+                      </div>
+                      <span
+                        aria-hidden
+                        className="font-display text-4xl leading-none text-sage/60"
+                      >
+                        &ldquo;
+                      </span>
+                    </div>
+                    <blockquote className="mt-5 font-display text-[1.38rem] leading-snug text-graphite">
+                      &ldquo;{item.quote}&rdquo;
+                    </blockquote>
+                  </div>
+                  <figcaption className="mt-7 border-t border-cream/80 pt-5">
+                    <span className="block text-sm font-semibold text-graphite">
+                      {item.name}
+                    </span>
+                    <span className="mt-1 block text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-taupe">
+                      {item.detail}
+                    </span>
+                  </figcaption>
+                </figure>
               </div>
-              <blockquote className="mt-5 flex-1 font-display text-xl leading-snug text-graphite">
-                &ldquo;{item.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-6 border-t border-cream pt-5">
-                <span className="block font-semibold text-brown">{item.name}</span>
-                <span className="mt-1 block text-xs uppercase tracking-[0.14em] text-taupe">
-                  {item.detail}
-                </span>
-              </figcaption>
-            </figure>
-          </Reveal>
-        ))}
-      </div>
-
-      {/* Mobile: carrusel destacado (drag + puntitos) */}
-      <div className="mx-auto mt-12 max-w-xl md:hidden">
-        <div className="overflow-hidden px-2">
-          <AnimatePresence custom={dir} mode="wait" initial={false}>
-            <motion.figure
-              key={index}
-              custom={dir}
-              variants={reduce ? undefined : testimonialVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              drag={reduce ? false : "x"}
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.18}
-              onDragEnd={(e, info) => {
-                if (info.offset.x < -60) paginate(1);
-                else if (info.offset.x > 60) paginate(-1);
-              }}
-              className="flex cursor-grab flex-col items-center rounded-3xl border border-cream bg-warm-white px-6 py-10 text-center shadow-soft active:cursor-grabbing"
-            >
-              <div className="flex gap-1 text-sage-deep">
-                {Array.from({ length: 5 }).map((_, s) => (
-                  <Star key={s} size={18} weight="fill" />
-                ))}
-              </div>
-              <blockquote className="mt-7 max-w-2xl font-display text-2xl leading-snug text-graphite sm:text-3xl md:text-[2.1rem]">
-                &ldquo;{t.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-8">
-                <span className="block font-semibold text-brown">{t.name}</span>
-                <span className="mt-1 block text-xs uppercase tracking-[0.14em] text-taupe">
-                  {t.detail}
-                </span>
-              </figcaption>
-            </motion.figure>
-          </AnimatePresence>
+            </Reveal>
+          ))}
         </div>
 
-        {/* Puntitos */}
-        <div className="mt-10 flex justify-center gap-2">
-          {testimonials.map((item, idx) => (
-            <button
-              key={item.quote}
-              type="button"
-              onClick={() => goTo(idx)}
-              aria-label={`Testimonio ${idx + 1}`}
-              aria-current={index === idx}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                index === idx ? "w-6 bg-sage-deep" : "w-2 bg-brown/25"
-              }`}
-            />
-          ))}
+        {/* Mobile: carrusel táctil en Double-Bezel */}
+        <div
+          className="mx-auto mt-12 max-w-xl md:hidden"
+          onPointerDown={() => setPaused(true)}
+          onPointerEnter={() => setPaused(true)}
+          onPointerLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={() => setPaused(false)}
+        >
+          <div className="overflow-hidden px-1">
+            <AnimatePresence custom={dir} mode="wait" initial={false}>
+              <motion.div
+                key={index}
+                custom={dir}
+                variants={reduce ? undefined : testimonialVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
+                drag={reduce ? false : "x"}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.18}
+                onDragEnd={(e, info) => {
+                  if (info.offset.x < -60) paginate(1);
+                  else if (info.offset.x > 60) paginate(-1);
+                }}
+                className="bezel-shell cursor-grab active:cursor-grabbing"
+              >
+                <figure className="bezel-core flex flex-col items-center bg-surface-pure px-6 py-10 text-center">
+                  <div className="flex gap-1 text-sage-deep">
+                    {Array.from({ length: 5 }).map((_, s) => (
+                      <Star key={s} size={17} weight="fill" />
+                    ))}
+                  </div>
+                  <blockquote className="mt-6 max-w-lg font-display text-2xl leading-snug text-graphite">
+                    &ldquo;{t.quote}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-7 border-t border-cream/80 pt-5">
+                    <span className="block text-sm font-semibold text-graphite">
+                      {t.name}
+                    </span>
+                    <span className="mt-1 block text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-taupe">
+                      {t.detail}
+                    </span>
+                  </figcaption>
+                </figure>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <div className="mt-5 flex justify-center gap-1">
+            {testimonials.map((item, idx) => (
+              <button
+                key={item.quote}
+                type="button"
+                onClick={() => goTo(idx)}
+                aria-label={`Testimonio ${idx + 1}`}
+                aria-current={index === idx}
+                className="grid min-h-[44px] min-w-[44px] place-items-center"
+              >
+                <span
+                  className={`block h-2 rounded-full transition-all duration-300 ${
+                    index === idx ? "w-6 bg-sage-deep" : "w-2 bg-brown/25"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -960,28 +990,48 @@ function Testimonials() {
 /* ------------------------- Ubicación resumida --------------------------- */
 function LocationTeaser() {
   return (
-    <section className="border-t border-cream bg-cream-soft/40">
-      <div className="container-page grid gap-10 py-20 md:grid-cols-12 md:gap-14 md:py-24">
+    <section className="warm-c">
+      <div className="container-page grid items-center gap-10 py-24 md:grid-cols-12 md:gap-14 md:py-28">
         <div className="md:col-span-5">
-          <h2 className="text-3xl leading-tight sm:text-4xl">Estamos en Fisherton</h2>
-          <ul className="mt-8 space-y-5 text-brown/80">
-            <li className="flex items-start gap-3">
-              <MapPinLine size={22} className="mt-0.5 shrink-0 text-sage-deep" />
-              <span>{site.address}</span>
+          <h2 className="text-3xl leading-tight sm:text-4xl md:text-[2.75rem]">
+            Estamos en Fisherton
+          </h2>
+          <ul className="mt-8 space-y-4 text-brown/80">
+            <li className="flex items-start gap-3 pb-2">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-cream bg-cream/30 text-sage-deep">
+                <MapPinLine size={18} weight="light" />
+              </span>
+              <span className="pt-1.5">{site.address}</span>
             </li>
             {site.hours.map((h) => (
-              <li key={h.day} className="flex justify-between border-b border-cream pb-3 text-[0.98rem]">
+              <li
+                key={h.day}
+                className="flex justify-between border-b border-cream/80 pb-3 text-[0.95rem] tabular-nums"
+              >
                 <span>{h.day}</span>
-                <span className="text-brown/55">{h.value}</span>
+                <span className="text-brown/60">{h.value}</span>
               </li>
             ))}
           </ul>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button href={site.mapsLink} target="_blank" rel="noreferrer" variant="primary" size="md">
+            <Button
+              href={site.mapsLink}
+              target="_blank"
+              rel="noreferrer"
+              variant="primary"
+              size="md"
+              arrow
+            >
               Cómo llegar
             </Button>
-            <Button href={waLink("Hola, quisiera pedir un turno.")} target="_blank" rel="noreferrer" variant="outline" size="md">
-              Pedir turno
+            <Button
+              href={waLink("Hola, quisiera pedir un turno.")}
+              target="_blank"
+              rel="noreferrer"
+              variant="outline"
+              size="md"
+            >
+              Consultar horarios
             </Button>
           </div>
         </div>
@@ -994,24 +1044,28 @@ function LocationTeaser() {
 }
 
 export function MapPanel() {
-  return site.mapsEmbed ? (
-    <iframe
-      title="Ubicación de Dermafisherton en Fisherton"
-      src={site.mapsEmbed}
-      loading="lazy"
-      className="aspect-[16/10] w-full rounded-3xl border border-cream"
-    />
-  ) : (
-    <div className="img-scrim relative grid aspect-[16/10] w-full place-items-center overflow-hidden rounded-3xl border border-cream bg-cream">
-      <img
-        src="https://picsum.photos/seed/fisherton-map-soft/1000/640?grayscale"
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full object-cover opacity-70"
-      />
-      <span className="relative z-10 flex items-center gap-2 rounded-full bg-warm-white/90 px-4 py-2 text-sm font-medium text-brown shadow-soft backdrop-blur">
-        <MapPinLine size={18} className="text-sage-deep" /> Mapa a integrar
-      </span>
+  return (
+    <div className="bezel-shell">
+      {site.mapsEmbed ? (
+        <iframe
+          title="Ubicación de Dermafisherton en Fisherton"
+          src={site.mapsEmbed}
+          loading="lazy"
+          className="bezel-core block aspect-[16/10] w-full bg-cream"
+        />
+      ) : (
+        <div className="bezel-core img-scrim relative grid aspect-[16/10] w-full place-items-center overflow-hidden bg-cream">
+          <img
+            src="https://picsum.photos/seed/fisherton-map-soft/1000/640?grayscale"
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover opacity-70"
+          />
+          <span className="relative z-10 flex items-center gap-2 rounded-full bg-surface-pure/90 px-4 py-2 text-sm font-medium text-brown shadow-soft backdrop-blur">
+            <MapPinLine size={18} className="text-sage-deep" /> Mapa de ubicación
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -1027,7 +1081,9 @@ export default function Home() {
       <Featured />
       <FAQ />
       <Testimonials />
-      <CTASection />
+      <div className="warm-b">
+        <CTASection />
+      </div>
       <LocationTeaser />
     </>
   );

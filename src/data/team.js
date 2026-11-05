@@ -22,7 +22,7 @@ export const team = [
       "Médica dermatóloga. Acompaña a cada paciente con una evaluación profesional previa, priorizando la salud de la piel y resultados naturales.",
     details: [
       "Atiende en El Bosque Centro Médico (Grupo Gamma)",
-      "Consultorios Génova, Fisherton — Dermafisherton",
+      "Consultorios Génova, Fisherton · Dermafisherton",
     ],
   },
   {

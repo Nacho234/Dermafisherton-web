@@ -9,6 +9,7 @@ export default function Reveal({
   y = 22,
   className = "",
   amount = 0.25,
+  ...rest
 }) {
   const reduce = useReducedMotion();
   const MotionTag = motion[as] || motion.div;
@@ -16,6 +17,7 @@ export default function Reveal({
   return (
     <MotionTag
       className={className}
+      {...rest}
       initial={reduce ? false : { opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount }}

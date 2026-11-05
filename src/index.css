@@ -2,7 +2,9 @@
 
 /* Self-hosted fonts (no external <link>) */
 @import "@fontsource/cormorant-garamond/400.css";
+@import "@fontsource/cormorant-garamond/400-italic.css";
 @import "@fontsource/cormorant-garamond/500.css";
+@import "@fontsource/cormorant-garamond/500-italic.css";
 @import "@fontsource/cormorant-garamond/600.css";
 @import "@fontsource-variable/manrope";
 
@@ -11,10 +13,20 @@
 /*  ONE warm-neutral palette, sage as the single locked accent.        */
 /* ------------------------------------------------------------------ */
 @theme {
-  /* Backgrounds are pure white across the whole page (client request). */
-  --color-warm-white: #ffffff;
-  --color-cream: #ece4da; /* warm hairline / border only */
-  --color-cream-soft: #ffffff; /* section fills stay pure white */
+  /* Escala de superficies cálida (un solo tema claro, sin saltos a negro puro).
+     0 pure   -> Hero (se funde con el blanco de estudio del retrato) + interior de cards
+     1 warm   -> alabastro: secciones editoriales abiertas / fondo base
+     2 cream  -> lino: secciones alternadas (las cards blancas despegan por luz)
+     3 wash   -> salvia desaturada: bloques de confianza clínica
+     4 espresso -> ancla profunda cálida: solo cierres de alto impacto */
+  --color-surface-pure: #ffffff;
+  --color-warm-white: #f5ece0; /* base de página: champagne (punto medio de la gama) */
+  --color-cream-soft: #f3eee7;
+  --color-sage-wash: #eef2ec;
+  --color-espresso: #2a231f;
+  --color-brown-deep: #3a302a;
+
+  --color-cream: #ece4da; /* hairline / borde cálido */
   --color-taupe: #9b8574;
   --color-brown: #4b3f38;
   --color-sage: #a8b8a1;
@@ -27,19 +39,25 @@
   /* One radius scale, soft + generous */
   --radius-xl: 1.25rem;
   --radius-2xl: 1.75rem;
-  --radius-3xl: 2.5rem;
+  --radius-3xl: 2rem;
 
   /* Tinted, never pure-black shadows */
-  --shadow-soft: 0 1px 2px rgba(75, 63, 56, 0.04),
-    0 12px 32px -12px rgba(75, 63, 56, 0.12);
-  --shadow-lift: 0 2px 4px rgba(75, 63, 56, 0.05),
-    0 24px 48px -20px rgba(75, 63, 56, 0.18);
+  --shadow-ambient: 0 1px 2px rgba(58, 48, 42, 0.03),
+    0 6px 20px -8px rgba(58, 48, 42, 0.08);
+  --shadow-soft: 0 1px 2px rgba(58, 48, 42, 0.04),
+    0 14px 36px -14px rgba(58, 48, 42, 0.13);
+  --shadow-lift: 0 2px 6px rgba(58, 48, 42, 0.05),
+    0 28px 56px -22px rgba(58, 48, 42, 0.2);
+
+  /* Signature fluid curve */
+  --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
@@ -47,7 +65,19 @@
     background-color: var(--color-warm-white);
     color: var(--color-brown);
     font-family: var(--font-sans);
-    font-feature-settings: " cv11", "ss01";
+    font-feature-settings: "cv11", "ss01";
+    overflow-x: clip;
+  }
+
+  /* Subtle editorial paper film-grain (fixed, GPU-safe, pointer-events-none) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    pointer-events: none;
+    opacity: 0.022;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   ::selection {
@@ -58,39 +88,171 @@
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 500;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: var(--color-graphite);
+    font-synthesis-style: none;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Tailwind v4 resets button cursor to default; restore pointer per UI/UX Pro Max */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
   }
 
   /* Accessible focus ring, sage, never removed */
   :where(a, button, input, textarea, select, [tabindex]):focus-visible {
     outline: 2px solid var(--color-sage-deep);
     outline-offset: 3px;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 }
 
 @layer utilities {
-  .font-display { font-family: var(--font-display); }
+  .font-display {
+    font-family: var(--font-display);
+    font-synthesis-style: none;
+  }
 
   /* Editorial small label. Rationed per Taste Skill (max 1 / 3 sections). */
   .eyebrow {
     font-family: var(--font-sans);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--color-taupe);
   }
 
+  /* Hero: fondo champagne con luz cálida (referencia de diseño aprobada) */
+  .hero-bg {
+    background:
+      radial-gradient(60% 70% at 78% 38%, rgba(255, 245, 234, 0.95), transparent 70%),
+      radial-gradient(50% 55% at 0% 100%, rgba(233, 214, 186, 0.6), transparent 70%),
+      linear-gradient(100deg, #f7f1e8 0%, #f3e8da 50%, #f1e1d1 100%);
+  }
+  /* Continuación del hero: champagne más suave para las secciones siguientes */
+  .section-champagne {
+    background:
+      radial-gradient(55% 60% at 88% 8%, rgba(255, 245, 234, 0.85), transparent 70%),
+      linear-gradient(180deg, #f3e8da 0%, #f5ece0 50%, #f7f0e6 100%);
+  }
+  .warm-a { background: linear-gradient(180deg, #f7f0e6 0%, #f3e8da 100%); }
+  .warm-b { background: linear-gradient(180deg, #f3e8da 0%, #f7f0e6 100%); }
+  /* cierre: termina en la base de página (#f5ece0) para empalmar con el footer */
+  .warm-c { background: linear-gradient(180deg, #f7f0e6 0%, #f5ece0 100%); }
+  .gold-text {
+    background-image: linear-gradient(100deg, #9f7733 0%, #d6b46c 50%, #a9812f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .gold-fill {
+    background-image: linear-gradient(135deg, #c39a4f 0%, #ead59b 42%, #b88c3f 100%);
+  }
+
+  /* Destello que cruza el botón dorado (solo transform: va por compositor).
+     --shine-delay desfasa botones vecinos para que no brillen a la vez. */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .btn-shine::after {
+    content: "";
+    position: absolute;
+    top: -25%;
+    bottom: -25%;
+    left: 0;
+    width: 42%;
+    pointer-events: none;
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.7) 50%,
+      transparent 100%
+    );
+    transform: translateX(-170%) skewX(-22deg);
+    animation: btn-shine 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation-delay: var(--shine-delay, 0s);
+  }
+  .btn-shine:hover::after,
+  .btn-shine:focus-visible::after {
+    animation-duration: 1.3s;
+  }
+  @keyframes btn-shine {
+    0%, 58% { transform: translateX(-170%) skewX(-22deg); }
+    100% { transform: translateX(400%) skewX(-22deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn-shine::after { animation: none; }
+  }
+
   .container-page {
     width: 100%;
-    max-width: 1240px;
+    max-width: 1260px;
     margin-inline: auto;
     padding-inline: 1.5rem;
   }
   @media (min-width: 1024px) {
     .container-page { padding-inline: 2.5rem; }
+  }
+
+  /* Double-Bezel (Doppelrand): nested outer shell + inner core */
+  .bezel-shell {
+    border-radius: 2rem;
+    padding: 0.375rem;
+    background-color: rgba(236, 228, 218, 0.38);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      0 1px 2px rgba(58, 48, 42, 0.04),
+      0 16px 38px -18px rgba(58, 48, 42, 0.14);
+    border: 1px solid rgba(58, 48, 42, 0.07);
+  }
+
+  @media (min-width: 640px) {
+    .bezel-shell {
+      padding: 0.5rem;
+    }
+  }
+
+  .bezel-core {
+    border-radius: calc(2rem - 0.375rem);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  }
+
+  @media (min-width: 640px) {
+    .bezel-core {
+      border-radius: calc(2rem - 0.5rem);
+    }
+  }
+
+  /* Frosted-glass web approximation (for floating overlays / hero cards) */
+  .glass-panel {
+    position: relative;
+    isolation: isolate;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    background:
+      linear-gradient(140deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.22)),
+      rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+      0 24px 60px -24px rgba(58, 48, 42, 0.32);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
   }
 
   /* Warm editorial scrim so placeholder photography still reads on-brand */
@@ -102,10 +264,134 @@
       160deg,
       rgba(250, 247, 242, 0.12) 0%,
       rgba(155, 133, 116, 0.14) 55%,
-      rgba(75, 63, 56, 0.28) 100%
+      rgba(58, 48, 42, 0.28) 100%
     );
     mix-blend-mode: multiply;
     pointer-events: none;
+  }
+}
+
+/* Marquee de cualidades: CSS puro (compositor), pausa al hover/foco */
+@keyframes marquee-x {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.marquee-track {
+  animation: marquee-x 46s linear infinite;
+  will-change: transform;
+}
+.marquee-viewport:hover .marquee-track,
+.marquee-viewport:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Notificación temporal del iPhone: baja, se queda ~3 s y se va hacia arriba (una vez) */
+@keyframes notif-pop {
+  0%   { transform: translateY(-170%); opacity: 0; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+  14%  { transform: translateY(0); opacity: 1; animation-timing-function: linear; }
+  86%  { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(0.55, 0, 0.8, 0.4); }
+  100% { transform: translateY(-170%); opacity: 0; }
+}
+.notif-pop { animation: notif-pop 4.2s 1.2s both; }
+
+/* ------------------------------------------------------------------ */
+/*  Paredes con relieve: paneles estriados + arcos en bajorrelieve.     */
+/*  Se aplica a las secciones de las páginas públicas (hijas directas   */
+/*  de la página), detrás del contenido. Los héroes (.hero-bg) y las    */
+/*  franjas finas (.no-wall) quedan afuera. Alterna de lado por sección. */
+/* ------------------------------------------------------------------ */
+@layer components {
+  /* La decoración puede salirse del ancho: se recorta en el contenedor de la página
+     (clip no crea scroll ni rompe los elementos sticky). */
+  #main-content > div {
+    overflow-x: clip;
+  }
+  #main-content > div > section:not(.hero-bg):not(.no-wall) {
+    position: relative;
+    isolation: isolate;
+
+    --wall-w: min(30vw, 440px); /* ancho de la franja estriada */
+    --arch-w: min(36vw, 560px); /* ancho del arco */
+  }
+  #main-content > div > section:not(.hero-bg):not(.no-wall)::before,
+  #main-content > div > section:not(.hero-bg):not(.no-wall)::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Franja estriada (yeso acanalado): cada canal tiene luz y sombra */
+  #main-content > div > section:not(.hero-bg):not(.no-wall)::before {
+    top: 0;
+    bottom: 0;
+    width: var(--wall-w);
+    left: 50%;
+    margin-left: -50vw;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(110, 85, 60, 0.09) 0,
+      rgba(110, 85, 60, 0) 5px,
+      rgba(255, 255, 255, 0.62) 12px,
+      rgba(255, 255, 255, 0) 19px,
+      rgba(110, 85, 60, 0.09) 22px
+    );
+    /* se desvanece hacia adentro y también arriba/abajo (sin cortes secos) */
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 100%),
+      linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 100%),
+      linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Arco en bajorrelieve con escalón interior, en el lado opuesto */
+  #main-content > div > section:not(.hero-bg):not(.no-wall)::after {
+    bottom: 0;
+    width: var(--arch-w);
+    height: min(78%, 720px);
+    left: 50%;
+    transform: translateX(calc(50vw - var(--arch-w) * 0.46));
+    border-radius: 999px 999px 0 0;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 96%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 96%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05) 70%, rgba(255, 255, 255, 0));
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+      inset 14px 18px 36px -10px rgba(110, 85, 60, 0.11),
+      inset 0 0 0 30px rgba(255, 255, 255, 0.1),
+      inset 0 0 0 31px rgba(255, 255, 255, 0.5),
+      inset 12px 16px 24px -14px rgba(110, 85, 60, 0.08),
+      -10px -8px 28px rgba(255, 255, 255, 0.28),
+      14px 16px 36px rgba(110, 85, 60, 0.075);
+  }
+
+  /* Secciones pares: se espeja (franja a la derecha, arco a la izquierda) */
+  #main-content > div > section:not(.hero-bg):not(.no-wall):nth-of-type(even)::before {
+    left: auto;
+    margin-left: 0;
+    right: 50%;
+    margin-right: -50vw;
+    -webkit-mask-image: linear-gradient(270deg, #000 0%, #000 30%, transparent 100%),
+      linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    mask-image: linear-gradient(270deg, #000 0%, #000 30%, transparent 100%),
+      linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  }
+  #main-content > div > section:not(.hero-bg):not(.no-wall):nth-of-type(even)::after {
+    left: auto;
+    right: 50%;
+    transform: translateX(calc(-50vw + var(--arch-w) * 0.46));
+  }
+
+  /* En pantallas chicas la decoración se aquieta para no competir con el texto */
+  @media (max-width: 767px) {
+    #main-content > div > section:not(.hero-bg):not(.no-wall) {
+      --wall-w: 38vw;
+      --arch-w: 56vw;
+    }
+    #main-content > div > section:not(.hero-bg):not(.no-wall)::after {
+      opacity: 0.7;
+    }
   }
 }
 

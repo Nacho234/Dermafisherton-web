@@ -1,7 +1,7 @@
 // Quote max 3 lines, clean attribution (name + detail). Real typographic quotes.
 export default function TestimonialCard({ quote, name, detail }) {
   return (
-    <figure className="flex h-full flex-col rounded-3xl border border-cream bg-warm-white/60 p-8">
+    <figure className="flex h-full flex-col rounded-3xl border border-cream bg-surface-pure/60 p-8">
       <span aria-hidden className="font-display text-5xl leading-none text-sage-deep/50">
         &ldquo;
       </span>
